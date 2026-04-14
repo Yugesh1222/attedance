@@ -529,339 +529,10 @@
     .stats-grid { gap: 8px; }
     .stat-num { font-size: 24px; }
   }
-
-  /* ══════════════════════════════════════════════════════
-     ENHANCED ANIMATIONS & VISUAL UPGRADES
-  ══════════════════════════════════════════════════════ */
-
-  /* Animated mesh background */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 15% 85%, rgba(99,102,241,0.08) 0%, transparent 40%),
-      radial-gradient(circle at 85% 15%, rgba(59,130,246,0.10) 0%, transparent 40%);
-    pointer-events: none;
-    z-index: 0;
-    animation: meshShift 12s ease-in-out infinite alternate;
-  }
-  @keyframes meshShift {
-    0%   { opacity: 0.5; transform: scale(1); }
-    100% { opacity: 1;   transform: scale(1.08); }
-  }
-
-  /* Glowing logo */
-  .logo-mark {
-    animation: logoGlow 3s ease-in-out infinite alternate;
-  }
-  @keyframes logoGlow {
-    from { box-shadow: 0 4px 16px rgba(59,130,246,0.35); }
-    to   { box-shadow: 0 4px 28px rgba(99,102,241,0.65), 0 0 0 1px rgba(99,102,241,0.2); }
-  }
-
-  /* Screen slide-in */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(28px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes slideInRight {
-    from { opacity: 0; transform: translateX(30px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  @keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-30px); }
-    to   { opacity: 1; transform: translateX(0); }
-  }
-  .screen.active { animation: fadeUp 0.45s cubic-bezier(0.22,1,0.36,1) both; }
-
-  /* Card hover lift */
-  .card {
-    transition: box-shadow 0.3s, transform 0.3s;
-    will-change: transform;
-  }
-  .card:hover {
-    box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 0 1px rgba(59,130,246,0.08);
-    transform: translateY(-1px);
-  }
-
-  /* Input glow upgrade */
-  input:focus, select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(59,130,246,0.20), 0 0 16px rgba(59,130,246,0.12);
-  }
-
-  /* Button shimmer effect */
-  .btn-primary::after, .btn-green::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transform: skewX(-20deg);
-    transition: none;
-  }
-  .btn-primary:hover::after, .btn-green:hover::after {
-    animation: shimmer 0.6s ease forwards;
-  }
-  @keyframes shimmer {
-    0%   { left: -100%; }
-    100% { left: 160%; }
-  }
-
-  /* Button glow on hover */
-  .btn-primary:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(59,130,246,0.55), 0 0 0 1px rgba(59,130,246,0.3);
-  }
-  .btn-green:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(16,185,129,0.50), 0 0 0 1px rgba(16,185,129,0.3);
-  }
-  .btn-red:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(239,68,68,0.50), 0 0 0 1px rgba(239,68,68,0.3);
-  }
-  .btn:active { transform: scale(0.96) translateY(0) !important; }
-
-  /* Stats cards with glow on load */
-  .stat-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .stat-total::before   { background: radial-gradient(circle at 50% 0%, rgba(59,130,246,0.15), transparent 70%); }
-  .stat-present::before { background: radial-gradient(circle at 50% 0%, rgba(16,185,129,0.15), transparent 70%); }
-  .stat-absent::before  { background: radial-gradient(circle at 50% 0%, rgba(239,68,68,0.15), transparent 70%); }
-  .stat-card:hover::before { opacity: 1; }
-  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-
-  /* Animated stat number */
-  .stat-num { transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), color 0.2s; }
-
-  /* Event dot enhanced pulse */
-  .event-dot {
-    animation: pulseDot 2s ease-in-out infinite;
-  }
-  @keyframes pulseDot {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(16,185,129,0.3), 0 0 0 0 rgba(16,185,129,0.5); transform: scale(1); }
-    50%       { box-shadow: 0 0 0 6px rgba(16,185,129,0.1), 0 0 12px 2px rgba(16,185,129,0.3); transform: scale(1.15); }
-  }
-
-  /* Event banner glow */
-  .event-banner {
-    animation: bannerIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
-    box-shadow: 0 0 0 1px rgba(59,130,246,0.2), 0 4px 20px rgba(59,130,246,0.1);
-  }
-  @keyframes bannerIn {
-    from { opacity: 0; transform: translateY(-10px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  /* Student card pop-in */
-  .student-card {
-    animation: cardPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
-  @keyframes cardPop {
-    from { opacity: 0; transform: scale(0.94) translateY(12px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  /* Alert slide in */
-  .alert.show {
-    animation: alertIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
-  }
-  @keyframes alertIn {
-    from { opacity: 0; transform: translateY(-8px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-
-  /* Toast notification overlay */
-  #toastContainer {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    pointer-events: none;
-  }
-  .toast {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-    white-space: nowrap;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .toast.toast-ok  { border-color: rgba(16,185,129,0.4); box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(16,185,129,0.2); }
-  .toast.toast-err { border-color: rgba(239,68,68,0.4);  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(239,68,68,0.2); }
-  .toast.toast-out { animation: toastOut 0.3s ease forwards; }
-  @keyframes toastIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.9); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
-  }
-  @keyframes toastOut {
-    from { opacity: 1; transform: translateY(0) scale(1); }
-    to   { opacity: 0; transform: translateY(-12px) scale(0.92); }
-  }
-
-  /* Success overlay when event is created */
-  #successOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
-    z-index: 9998;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    animation: fadeOverlay 0.3s ease;
-  }
-  #successOverlay.show { display: flex; }
-  @keyframes fadeOverlay { from { opacity:0; } to { opacity:1; } }
-
-  .success-modal {
-    background: var(--card);
-    border: 1px solid rgba(16,185,129,0.3);
-    border-radius: 24px;
-    padding: 40px 32px;
-    text-align: center;
-    max-width: 320px;
-    width: 90%;
-    animation: modalPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-    box-shadow: 0 0 60px rgba(16,185,129,0.15), 0 24px 64px rgba(0,0,0,0.6);
-  }
-  @keyframes modalPop {
-    from { opacity:0; transform: scale(0.7) translateY(30px); }
-    to   { opacity:1; transform: scale(1) translateY(0); }
-  }
-  .success-icon {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.08));
-    border: 2px solid rgba(16,185,129,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    margin: 0 auto 20px;
-    animation: iconSpin 0.6s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
-    box-shadow: 0 0 30px rgba(16,185,129,0.3);
-  }
-  @keyframes iconSpin {
-    from { transform: scale(0) rotate(-180deg); opacity: 0; }
-    to   { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-  .success-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .success-sub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.5;
-    margin-bottom: 24px;
-  }
-  .success-event-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--green);
-    background: rgba(16,185,129,0.1);
-    border: 1px solid rgba(16,185,129,0.2);
-    border-radius: 10px;
-    padding: 10px 16px;
-    margin-bottom: 24px;
-  }
-
-  /* Floating particles on success */
-  .particle {
-    position: fixed;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    animation: particleFly 1.2s ease-out forwards;
-  }
-  @keyframes particleFly {
-    0%   { opacity: 1; transform: translate(0,0) scale(1); }
-    100% { opacity: 0; transform: var(--tx, translate(0,-120px)) scale(0.2); }
-  }
-
-  /* Header badge pulse on ADMIN */
-  .header-badge {
-    transition: all 0.3s;
-    position: relative;
-  }
-  .header-badge.active-admin {
-    color: var(--accent) !important;
-    border-color: rgba(59,130,246,0.4) !important;
-    box-shadow: 0 0 12px rgba(59,130,246,0.25);
-    animation: badgePulse 3s ease-in-out infinite;
-  }
-  @keyframes badgePulse {
-    0%, 100% { box-shadow: 0 0 8px rgba(59,130,246,0.2); }
-    50%       { box-shadow: 0 0 18px rgba(59,130,246,0.45); }
-  }
-
-  /* Section block enhanced */
-  .section-block {
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .section-block:hover { transform: translateX(3px); box-shadow: -3px 0 0 var(--accent); }
-
-  /* Stagger children animation */
-  .stagger-child {
-    animation: fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
-  }
-  .stagger-child:nth-child(1) { animation-delay: 0.05s; }
-  .stagger-child:nth-child(2) { animation-delay: 0.10s; }
-  .stagger-child:nth-child(3) { animation-delay: 0.15s; }
-  .stagger-child:nth-child(4) { animation-delay: 0.20s; }
 </style>
 </head>
 <body>
 <div class="app-wrapper">
-
-  <!-- TOAST CONTAINER -->
-  <div id="toastContainer"></div>
-
-  <!-- SUCCESS OVERLAY -->
-  <div id="successOverlay">
-    <div class="success-modal">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Event Created!</div>
-      <div class="success-sub">Attendance is now open for members.</div>
-      <div class="success-event-name" id="successEventName">—</div>
-      <button class="btn btn-green" onclick="closeSuccessOverlay()" style="font-size:14px; padding:13px">
-        Go to Dashboard →
-      </button>
-    </div>
-  </div>
 
   <!-- HEADER -->
   <header class="app-header">
@@ -885,9 +556,6 @@
       </div>
       <button class="btn btn-primary" onclick="saveScriptUrl()">
         Save & Continue →
-      </button>
-      <button class="btn btn-outline" id="testConnBtn" onclick="testConnection()" style="margin-top:10px">
-        🔗 Test Connection
       </button>
     </div>
     <div class="card" style="opacity:0.7">
@@ -961,25 +629,25 @@
 
     <div id="adminCreateEvent">
       <div class="card">
-        <div class="card-title stagger-child">Create Event</div>
-        <div class="card-sub stagger-child">Fill in event details to open attendance for members.</div>
+        <div class="card-title">Create Event</div>
+        <div class="card-sub">Fill in event details to open attendance for members.</div>
 
-        <div class="field stagger-child">
+        <div class="field">
           <label>Event Name</label>
           <input type="text" id="eventName" placeholder="e.g. Annual Tech Symposium"/>
         </div>
-        <div class="field stagger-child">
+        <div class="field">
           <label>Date</label>
           <input type="date" id="eventDate"/>
         </div>
-        <div class="field stagger-child">
+        <div class="field">
           <label>Auditorium / Venue</label>
           <input type="text" id="eventVenue" placeholder="e.g. Main Auditorium"/>
         </div>
 
         <div class="alert alert-err" id="adminAlert"></div>
 
-        <button class="btn btn-primary stagger-child" id="createEventBtn" onclick="createEvent()">
+        <button class="btn btn-primary" id="createEventBtn" onclick="createEvent()">
           ✦ Create & Open Event
         </button>
       </div>
@@ -1158,7 +826,6 @@ function setHeaderBadge(txt, color='var(--muted)') {
   const b = document.getElementById('headerBadge');
   b.textContent = txt;
   b.style.color = color;
-  b.classList.toggle('active-admin', txt === 'ADMIN');
 }
 
 function showAlert(el, msg, type='err') {
@@ -1172,13 +839,9 @@ function clearAlert(id) {
 }
 
 function animateNum(el, val) {
-  el.style.transform = 'scale(1.4) translateY(-4px)';
-  el.style.opacity = '0.5';
+  el.style.transform = 'scale(1.3)';
   el.textContent = val;
-  setTimeout(() => {
-    el.style.transform = 'scale(1)';
-    el.style.opacity = '1';
-  }, 180);
+  setTimeout(() => el.style.transform = '', 200);
 }
 
 function ripple(btn, e) {
@@ -1196,19 +859,14 @@ document.querySelectorAll('.btn').forEach(b => b.addEventListener('click', e => 
 async function api(action, params={}) {
   const url = new URL(SCRIPT_URL);
   url.searchParams.set('action', action);
-  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
-  try {
-    const res = await fetch(url.toString(), { redirect: 'follow' });
-    const text = await res.text();
-    try { return JSON.parse(text); }
-    catch(e) { throw new Error('Server error: ' + text.slice(0,100)); }
-  } catch(err) {
-    throw new Error('Network error: ' + err.message);
-  }
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
+  const res = await fetch(url.toString(), { redirect: 'follow' });
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(e) { throw new Error('Server error: ' + text.slice(0, 120)); }
 }
 
-// Google Apps Script blocks CORS POST with JSON body.
-// Route all writes through GET params — doGet handles all actions.
+// All mutations also go through GET (Apps Script GET works fine from browsers)
 async function apiPost(action, body={}) {
   return api(action, body);
 }
@@ -1221,43 +879,13 @@ function showSetup() { showScreen('screenSetup'); }
 function saveScriptUrl() {
   const v = document.getElementById('scriptUrlInput').value.trim();
   if (!v.startsWith('https://script.google.com')) {
-    showToast('❌ Enter a valid Google Apps Script URL', 'err');
+    alert('Please enter a valid Google Apps Script URL');
     return;
   }
   SCRIPT_URL = v;
   localStorage.setItem('attendx_url', v);
   showScreen('screenLogin');
   setHeaderBadge('READY');
-  showToast('✅ Script URL saved!', 'ok');
-}
-
-async function testConnection() {
-  if (!SCRIPT_URL) {
-    const v = document.getElementById('scriptUrlInput').value.trim();
-    if (!v.startsWith('https://script.google.com')) {
-      showToast('❌ Save the URL first', 'err');
-      return;
-    }
-    SCRIPT_URL = v;
-  }
-  const btn = document.getElementById('testConnBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Testing…';
-  try {
-    const res = await api('ping', {});
-    if (res.ok || res.pong) {
-      showToast('✅ Connected to backend!', 'ok');
-      localStorage.setItem('attendx_url', SCRIPT_URL);
-      setTimeout(() => showScreen('screenLogin'), 800);
-    } else {
-      showToast('⚠️ Connected but got: ' + JSON.stringify(res).slice(0,60), 'err');
-    }
-  } catch(e) {
-    showToast('❌ ' + e.message, 'err');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🔗 Test Connection';
-  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1356,74 +984,25 @@ async function createEvent() {
   const date  = document.getElementById('eventDate').value;
   const venue = document.getElementById('eventVenue').value.trim();
   clearAlert('adminAlert');
-  if (!name || !date || !venue) {
-    showAlert('adminAlert', 'Please fill all fields.');
-    showToast('⚠️ Fill in all fields first', 'err');
-    return;
-  }
+  if (!name || !date || !venue) { showAlert('adminAlert', 'Please fill all fields.'); return; }
   const btn = document.getElementById('createEventBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Creating…';
   try {
     const res = await apiPost('createEvent', { name, date, venue });
-    if (!res.ok) throw new Error(res.msg || 'Failed to create event');
-    state.eventName   = name;
-    state.eventDate   = date;
-    state.eventVenue  = venue;
+    if (!res.ok) throw new Error(res.msg || 'Server returned error');
+    state.eventName  = name;
+    state.eventDate  = date;
+    state.eventVenue = venue;
     state.eventActive = true;
     state.eventLocked = false;
-
-    // Show success overlay with particles
-    document.getElementById('successEventName').textContent = name;
-    document.getElementById('successOverlay').classList.add('show');
-    spawnParticles();
-
+    showActiveAdmin();
     await loadAdminStats();
   } catch(err) {
-    showAlert('adminAlert', err.message);
-    showToast('❌ ' + err.message, 'err');
+    showAlert('adminAlert', '❌ ' + err.message);
     btn.disabled = false;
     btn.textContent = '✦ Create & Open Event';
   }
-}
-
-function closeSuccessOverlay() {
-  document.getElementById('successOverlay').classList.remove('show');
-  showActiveAdmin();
-}
-
-function spawnParticles() {
-  const colors = ['#3b82f6','#6366f1','#10b981','#f59e0b','#a5b4fc'];
-  for (let i = 0; i < 18; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    const x = (Math.random() - 0.5) * 300;
-    const y = -(60 + Math.random() * 200);
-    p.style.cssText = `
-      left: ${40 + Math.random() * 20}%;
-      top: 50%;
-      background: ${colors[Math.floor(Math.random() * colors.length)]};
-      width: ${4 + Math.random() * 8}px;
-      height: ${4 + Math.random() * 8}px;
-      --tx: translate(${x}px, ${y}px);
-      animation-delay: ${Math.random() * 0.3}s;
-      animation-duration: ${0.8 + Math.random() * 0.6}s;
-    `;
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 1500);
-  }
-}
-
-function showToast(msg, type = 'ok') {
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.textContent = msg;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.classList.add('toast-out');
-    setTimeout(() => toast.remove(), 400);
-  }, 3000);
 }
 
 async function loadAdminStats() {
