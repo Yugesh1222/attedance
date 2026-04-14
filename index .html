@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AttendX — College Attendance System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  /* ── TOKENS ──────────────────────────────────────────── */
+  :root {
+    --bg:        #0b0f1a;
+    --surface:   #111827;
+    --card:      #161d2e;
+    --border:    #1e2d45;
+    --accent:    #3b82f6;
+    --accent2:   #6366f1;
+    --green:     #10b981;
+    --red:       #ef4444;
+    --amber:     #f59e0b;
+    --text:      #f0f4ff;
+    --muted:     #64748b;
+    --subtle:    #1e2d45;
+    --radius:    16px;
+    --radius-sm: 10px;
+    --shadow:    0 8px 32px rgba(0,0,0,0.45);
+  }
+
+  /* ── RESET ───────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── ANIMATED BACKGROUND ─────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(59,130,246,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(99,102,241,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 60% at 60% 30%, rgba(16,185,129,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── LAYOUT ──────────────────────────────────────────── */
+  .app-wrapper {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
+  }
+
+  /* ── HEADER ──────────────────────────────────────────── */
+  .app-header {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0 28px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: #fff;
+    letter-spacing: -1px;
+    box-shadow: 0 4px 16px rgba(59,130,246,0.35);
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .header-badge {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    background: var(--subtle);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* ── SCREEN CONTROLLER ───────────────────────────────── */
+  .screen { display: none; width: 100%; max-width: 480px; animation: fadeUp 0.4s ease both; }
+  .screen.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── CARD ────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .card-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* ── FORM ELEMENTS ───────────────────────────────────── */
+  .field { margin-bottom: 16px; }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 7px;
+  }
+  input, select {
+    width: 100%;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    padding: 13px 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  input::placeholder { color: var(--muted); }
+  input:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
+  }
+  select { cursor: pointer; }
+
+  /* roll number row */
+  .roll-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .roll-prefix {
+    background: var(--subtle);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 13px 16px;
+    white-space: nowrap;
+    letter-spacing: 1px;
+    min-width: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .roll-input { flex: 1; letter-spacing: 3px; font-weight: 600; }
+
+  /* ── BUTTONS ─────────────────────────────────────────── */
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 6px 24px rgba(59,130,246,0.50); }
+
+  .btn-green {
+    background: linear-gradient(135deg, #059669, var(--green));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(16,185,129,0.30);
+  }
+  .btn-green:hover:not(:disabled) { box-shadow: 0 6px 24px rgba(16,185,129,0.45); }
+
+  .btn-red {
+    background: linear-gradient(135deg, #dc2626, var(--red));
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(239,68,68,0.30);
+  }
+  .btn-red:hover:not(:disabled) { box-shadow: 0 6px 24px rgba(239,68,68,0.45); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ripple */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transform: scale(0);
+    animation: rippleAnim 0.5s linear;
+    pointer-events: none;
+  }
+  @keyframes rippleAnim {
+    to { transform: scale(4); opacity: 0; }
+  }
+
+  /* ── LOGIN TOGGLE ────────────────────────────────────── */
+  .login-toggle {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 24px;
+    gap: 4px;
+  }
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .toggle-btn.active {
+    background: var(--card);
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ── ALERT ───────────────────────────────────────────── */
+  .alert {
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13.5px;
+    font-weight: 500;
+    margin-bottom: 14px;
+    display: none;
+    animation: fadeUp 0.25s ease;
+    line-height: 1.4;
+  }
+  .alert.show { display: block; }
+  .alert-err  { background: rgba(239,68,68,0.12);  border: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+  .alert-ok   { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .alert-info { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: #93c5fd; }
+  .alert-warn { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+
+  /* ── EVENT BANNER ────────────────────────────────────── */
+  .event-banner {
+    background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(99,102,241,0.12));
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .event-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(16,185,129,0.25);
+    animation: pulse 2s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(16,185,129,0.25); }
+    50%       { box-shadow: 0 0 0 6px rgba(16,185,129,0.10); }
+  }
+  .event-info { flex: 1; }
+  .event-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 14px; color: var(--text); }
+  .event-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── STUDENT CARD ────────────────────────────────────── */
+  .student-card {
+    background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(59,130,246,0.06));
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: var(--radius-sm);
+    padding: 18px;
+    margin: 14px 0;
+    animation: fadeUp 0.35s ease;
+  }
+  .student-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .student-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+  .tag-year { background: rgba(99,102,241,0.2); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.3); }
+  .tag-sec  { background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+  .tag-roll { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+
+  /* ── STATS GRID ──────────────────────────────────────── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px 10px;
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1;
+    margin-bottom: 4px;
+    transition: all 0.3s ease;
+  }
+  .stat-lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; color: var(--muted); text-transform: uppercase; }
+  .stat-total .stat-num { color: var(--accent); }
+  .stat-present .stat-num { color: var(--green); }
+  .stat-absent .stat-num { color: var(--red); }
+
+  /* ── SECTION REPORT ──────────────────────────────────── */
+  .section-block {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+    animation: fadeUp 0.3s ease both;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.02);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }
+  .section-count {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .section-count.all-present { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+  .section-count.has-absent  { background: rgba(239,68,68,0.15);  color: var(--red);   border: 1px solid rgba(239,68,68,0.25); }
+  .section-body { padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.35s ease, padding 0.3s; }
+  .section-body.open { max-height: 600px; padding: 14px 16px; }
+  .absentee-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    color: var(--text);
+  }
+  .absentee-item:last-child { border-bottom: none; }
+  .absentee-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+  .absentee-roll { font-size: 12px; color: var(--muted); margin-left: auto; font-weight: 600; }
+
+  /* ── LOADING SPINNER ─────────────────────────────────── */
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── DIVIDER ─────────────────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 20px 0;
+  }
+
+  /* ── LOGOUT ROW ──────────────────────────────────────── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .top-bar-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .icon-btn {
+    background: var(--subtle);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .icon-btn:hover { color: var(--red); border-color: var(--red); }
+
+  /* ── FINISH LOCKED ───────────────────────────────────── */
+  .locked-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--amber);
+    background: rgba(245,158,11,0.10);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+
+  /* ── CONFIG SETUP ────────────────────────────────────── */
+  .config-card {
+    background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.06));
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .config-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .config-sub { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
+
+  /* ── CHEVRON ─────────────────────────────────────────── */
+  .chevron { transition: transform 0.3s; display: inline-block; }
+  .chevron.open { transform: rotate(180deg); }
+
+  /* ── SECTION ABSENTEE LABEL ──────────────────────────── */
+  .absentees-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 400px) {
+    .card { padding: 22px 18px; }
+    .stats-grid { gap: 8px; }
+    .stat-num { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="logo">
+      <div class="logo-mark">Ax</div>
+      <span class="logo-text">AttendX</span>
+    </div>
+    <span class="header-badge" id="headerBadge">SYSTEM</span>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 0 — SETUP (First-time Google Apps Script URL)
+  ══════════════════════════════════════════════════════ -->
+  <div class="screen active" id="screenSetup">
+    <div class="config-card">
+      <div class="config-title">⚙️ One-time Setup Required</div>
+      <div class="config-sub">Paste your Google Apps Script Web App URL below. You can update this anytime. Find the URL after deploying your Apps Script as a Web App.</div>
+      <div class="field">
+        <label>Google Apps Script URL</label>
+        <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/..." />
+      </div>
+      <button class="btn btn-primary" onclick="saveScriptUrl()">
+        Save & Continue →
+      </button>
+    </div>
+    <div class="card" style="opacity:0.7">
+      <div class="card-title" style="font-size:16px">📋 Setup Instructions</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.8; margin-top:8px">
+        1. Open Google Sheets → Extensions → Apps Script<br>
+        2. Paste the <strong style="color:var(--text)">Code.gs</strong> code provided<br>
+        3. Update <code style="color:var(--accent); background:var(--subtle); padding:1px 5px; border-radius:4px">SPREADSHEET_ID</code> in the script<br>
+        4. Deploy → New deployment → Web App<br>
+        5. Execute as: <strong style="color:var(--text)">Me</strong> · Access: <strong style="color:var(--text)">Anyone</strong><br>
+        6. Copy the Web App URL and paste above
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 1 — LOGIN
+  ══════════════════════════════════════════════════════ -->
+  <div class="screen" id="screenLogin">
+    <div class="card">
+      <div class="card-title">Welcome back 👋</div>
+      <div class="card-sub">Sign in to manage or mark attendance</div>
+
+      <div class="login-toggle">
+        <button class="toggle-btn active" onclick="switchLoginMode('admin')" id="toggleAdmin">🔐 Admin</button>
+        <button class="toggle-btn" onclick="switchLoginMode('member')" id="toggleMember">👤 Member</button>
+      </div>
+
+      <div id="adminLoginFields">
+        <div class="field">
+          <label>Admin Username</label>
+          <input type="text" id="adminUser" placeholder="admin" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label>Admin Password</label>
+          <input type="password" id="adminPass" placeholder="••••••••" />
+        </div>
+      </div>
+
+      <div id="memberLoginFields" style="display:none">
+        <div class="field">
+          <label>Member ID</label>
+          <input type="text" id="memberUser" placeholder="e.g. member001" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="memberPass" placeholder="••••••••"/>
+        </div>
+      </div>
+
+      <div class="alert alert-err" id="loginAlert"></div>
+
+      <button class="btn btn-primary" id="loginBtn" onclick="handleLogin()">
+        Sign In
+      </button>
+
+      <div style="text-align:center; margin-top:14px">
+        <button class="btn btn-outline" style="font-size:13px; padding:10px" onclick="showSetup()">⚙️ Change Script URL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 2 — ADMIN DASHBOARD
+  ══════════════════════════════════════════════════════ -->
+  <div class="screen" id="screenAdmin">
+    <div class="top-bar">
+      <span class="top-bar-title">Admin Panel</span>
+      <button class="icon-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="adminCreateEvent">
+      <div class="card">
+        <div class="card-title">Create Event</div>
+        <div class="card-sub">Fill in event details to open attendance for members.</div>
+
+        <div class="field">
+          <label>Event Name</label>
+          <input type="text" id="eventName" placeholder="e.g. Annual Tech Symposium"/>
+        </div>
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="eventDate"/>
+        </div>
+        <div class="field">
+          <label>Auditorium / Venue</label>
+          <input type="text" id="eventVenue" placeholder="e.g. Main Auditorium"/>
+        </div>
+
+        <div class="alert alert-err" id="adminAlert"></div>
+
+        <button class="btn btn-primary" id="createEventBtn" onclick="createEvent()">
+          ✦ Create & Open Event
+        </button>
+      </div>
+    </div>
+
+    <div id="adminActiveEvent" style="display:none">
+      <div class="event-banner">
+        <div class="event-dot"></div>
+        <div class="event-info">
+          <div class="event-name" id="activeEventName"></div>
+          <div class="event-meta" id="activeEventMeta"></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card stat-total">
+          <div class="stat-num" id="adminTotal">—</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-card stat-present">
+          <div class="stat-num" id="adminPresent">0</div>
+          <div class="stat-lbl">Present</div>
+        </div>
+        <div class="stat-card stat-absent">
+          <div class="stat-num" id="adminAbsent">—</div>
+          <div class="stat-lbl">Absent</div>
+        </div>
+      </div>
+
+      <div id="adminYearFilter" class="card" style="padding:18px">
+        <label>Filter Stats by Year</label>
+        <select id="adminFilterYear" onchange="loadAdminStats()">
+          <option value="">All Years</option>
+          <option value="1">1st Year</option>
+          <option value="2">2nd Year</option>
+          <option value="3">3rd Year</option>
+        </select>
+      </div>
+
+      <div class="alert alert-err" id="finishAlert"></div>
+
+      <button class="btn btn-red" id="finishBtn" onclick="finishAttendance()">
+        🔒 Finish Attendance & Generate Report
+      </button>
+
+      <div style="margin-top:12px">
+        <button class="btn btn-outline" onclick="loadAdminStats()">↻ Refresh Stats</button>
+      </div>
+
+      <div id="adminReportSection" style="display:none; margin-top:20px">
+        <div class="card-title" style="margin-bottom:14px">Section-wise Absent Report</div>
+        <div id="adminReportContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       SCREEN 3 — MEMBER DASHBOARD
+  ══════════════════════════════════════════════════════ -->
+  <div class="screen" id="screenMember">
+    <div class="top-bar">
+      <span class="top-bar-title">Mark Attendance</span>
+      <button class="icon-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="event-banner" id="memberEventBanner" style="display:none">
+      <div class="event-dot"></div>
+      <div class="event-info">
+        <div class="event-name" id="memberEventName"></div>
+        <div class="event-meta" id="memberEventMeta"></div>
+      </div>
+    </div>
+
+    <div id="memberLockedBanner" class="locked-badge" style="display:none">
+      🔒 Attendance has been locked for this event.
+    </div>
+
+    <div class="card" id="memberInputCard">
+      <div class="field">
+        <label>Select Year</label>
+        <select id="memberYear" onchange="onYearChange()">
+          <option value="">— Choose Year —</option>
+          <option value="1">1st Year (26E)</option>
+          <option value="2">2nd Year (25E)</option>
+          <option value="3">3rd Year (24E)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Roll Number</label>
+        <div class="roll-row">
+          <div class="roll-prefix" id="rollPrefix">—</div>
+          <input class="roll-input" type="text" id="rollSuffix" maxlength="4" placeholder="1901" inputmode="numeric" oninput="onRollInput()" onkeyup="onRollEnter(event)"/>
+        </div>
+      </div>
+
+      <div class="alert alert-err"  id="fetchAlert"></div>
+      <div class="alert alert-info" id="fetchInfo"></div>
+
+      <button class="btn btn-primary" id="fetchBtn" onclick="fetchStudent()" disabled>
+        Search Student
+      </button>
+    </div>
+
+    <div id="studentDetails" style="display:none">
+      <div class="student-card" id="studentCard">
+        <div class="student-name" id="studentName">—</div>
+        <div class="student-tags">
+          <span class="tag tag-roll" id="studentRoll">—</span>
+          <span class="tag tag-year" id="studentYear">—</span>
+          <span class="tag tag-sec"  id="studentSec">—</span>
+        </div>
+      </div>
+
+      <div class="alert alert-warn" id="dupAlert" style="display:none">
+        ✓ Already Marked Present
+      </div>
+
+      <button class="btn btn-green" id="markBtn" onclick="markPresent()">
+        ✔ Mark Present
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card stat-total">
+        <div class="stat-num" id="mTotal">—</div>
+        <div class="stat-lbl">Total</div>
+      </div>
+      <div class="stat-card stat-present">
+        <div class="stat-num" id="mPresent">0</div>
+        <div class="stat-lbl">Present</div>
+      </div>
+      <div class="stat-card stat-absent">
+        <div class="stat-num" id="mAbsent">—</div>
+        <div class="stat-lbl">Absent</div>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /app-wrapper -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG & STATE
+═══════════════════════════════════════════════════════════════ */
+let SCRIPT_URL = localStorage.getItem('attendx_url') || '';
+
+const YEAR_PREFIX = { '1':'26E', '2':'25E', '3':'24E' };
+const YEAR_LABEL  = { '1':'1st Year', '2':'2nd Year', '3':'3rd Year' };
+
+let state = {
+  role: null,           // 'admin' | 'member'
+  eventActive: false,
+  eventName: '',
+  eventDate: '',
+  eventVenue: '',
+  eventLocked: false,
+  currentStudent: null,
+  markingInProgress: false,
+  loginMode: 'admin',
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setHeaderBadge(txt, color='var(--muted)') {
+  const b = document.getElementById('headerBadge');
+  b.textContent = txt;
+  b.style.color = color;
+}
+
+function showAlert(el, msg, type='err') {
+  const e = typeof el === 'string' ? document.getElementById(el) : el;
+  e.textContent = msg;
+  e.className = `alert alert-${type} show`;
+}
+function clearAlert(id) {
+  const e = document.getElementById(id);
+  if (e) { e.className = 'alert'; e.textContent = ''; }
+}
+
+function animateNum(el, val) {
+  el.style.transform = 'scale(1.3)';
+  el.textContent = val;
+  setTimeout(() => el.style.transform = '', 200);
+}
+
+function ripple(btn, e) {
+  const r = document.createElement('span');
+  r.classList.add('ripple');
+  const rect = btn.getBoundingClientRect();
+  r.style.left = (e.clientX - rect.left - 20) + 'px';
+  r.style.top  = (e.clientY - rect.top - 20) + 'px';
+  r.style.width = r.style.height = '40px';
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 600);
+}
+document.querySelectorAll('.btn').forEach(b => b.addEventListener('click', e => ripple(b, e)));
+
+async function api(action, params={}) {
+  const url = new URL(SCRIPT_URL);
+  url.searchParams.set('action', action);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+  const res = await fetch(url.toString());
+  const json = await res.json();
+  return json;
+}
+
+async function apiPost(action, body={}) {
+  const res = await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: JSON.stringify({ action, ...body }),
+  });
+  return await res.json();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SETUP SCREEN
+═══════════════════════════════════════════════════════════════ */
+function showSetup() { showScreen('screenSetup'); }
+
+function saveScriptUrl() {
+  const v = document.getElementById('scriptUrlInput').value.trim();
+  if (!v.startsWith('https://script.google.com')) {
+    alert('Please enter a valid Google Apps Script URL');
+    return;
+  }
+  SCRIPT_URL = v;
+  localStorage.setItem('attendx_url', v);
+  showScreen('screenLogin');
+  setHeaderBadge('READY');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════════════════════════ */
+function switchLoginMode(mode) {
+  state.loginMode = mode;
+  document.getElementById('adminLoginFields').style.display  = mode === 'admin'  ? '' : 'none';
+  document.getElementById('memberLoginFields').style.display = mode === 'member' ? '' : 'none';
+  document.getElementById('toggleAdmin').classList.toggle('active', mode === 'admin');
+  document.getElementById('toggleMember').classList.toggle('active', mode === 'member');
+  clearAlert('loginAlert');
+}
+
+async function handleLogin() {
+  clearAlert('loginAlert');
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    if (state.loginMode === 'admin') {
+      const user = document.getElementById('adminUser').value.trim();
+      const pass = document.getElementById('adminPass').value;
+      const res = await api('adminLogin', { user, pass });
+      if (!res.ok) throw new Error(res.msg || 'Invalid credentials');
+      state.role = 'admin';
+      setHeaderBadge('ADMIN', 'var(--accent)');
+      await loadAdminDashboard();
+      showScreen('screenAdmin');
+    } else {
+      const user = document.getElementById('memberUser').value.trim();
+      const pass = document.getElementById('memberPass').value;
+      const res = await api('memberLogin', { user, pass });
+      if (!res.ok) throw new Error(res.msg || 'Invalid credentials');
+      if (!res.eventActive) throw new Error('No active event. Wait for admin to open an event.');
+      state.role = 'member';
+      state.eventName   = res.eventName;
+      state.eventDate   = res.eventDate;
+      state.eventVenue  = res.eventVenue;
+      state.eventLocked = res.eventLocked;
+      setHeaderBadge('MEMBER', 'var(--green)');
+      loadMemberDashboard();
+      showScreen('screenMember');
+    }
+  } catch(err) {
+    showAlert('loginAlert', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+}
+
+function logout() {
+  state = { role: null, eventActive: false, loginMode: state.loginMode, markingInProgress: false };
+  setHeaderBadge('SYSTEM');
+  clearAlert('loginAlert');
+  showScreen('screenLogin');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════════════════════════════════════════ */
+async function loadAdminDashboard() {
+  const res = await api('getEventStatus');
+  if (res.eventActive) {
+    state.eventActive = true;
+    state.eventName   = res.eventName;
+    state.eventDate   = res.eventDate;
+    state.eventVenue  = res.eventVenue;
+    state.eventLocked = res.eventLocked;
+    showActiveAdmin();
+    await loadAdminStats();
+  } else {
+    document.getElementById('adminCreateEvent').style.display = '';
+    document.getElementById('adminActiveEvent').style.display = 'none';
+    // pre-fill today's date
+    document.getElementById('eventDate').valueAsDate = new Date();
+  }
+}
+
+function showActiveAdmin() {
+  document.getElementById('adminCreateEvent').style.display = 'none';
+  document.getElementById('adminActiveEvent').style.display = '';
+  document.getElementById('activeEventName').textContent = state.eventName;
+  document.getElementById('activeEventMeta').textContent = `${state.eventDate} · ${state.eventVenue}`;
+  if (state.eventLocked) {
+    document.getElementById('finishBtn').disabled = true;
+    document.getElementById('finishBtn').textContent = '🔒 Attendance Locked';
+    loadAbsentReport();
+  }
+}
+
+async function createEvent() {
+  const name  = document.getElementById('eventName').value.trim();
+  const date  = document.getElementById('eventDate').value;
+  const venue = document.getElementById('eventVenue').value.trim();
+  clearAlert('adminAlert');
+  if (!name || !date || !venue) { showAlert('adminAlert', 'Please fill all fields.'); return; }
+  const btn = document.getElementById('createEventBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creating…';
+  try {
+    const res = await apiPost('createEvent', { name, date, venue });
+    if (!res.ok) throw new Error(res.msg);
+    state.eventName  = name;
+    state.eventDate  = date;
+    state.eventVenue = venue;
+    state.eventActive = true;
+    state.eventLocked = false;
+    showActiveAdmin();
+    await loadAdminStats();
+  } catch(err) {
+    showAlert('adminAlert', err.message);
+    btn.disabled = false;
+    btn.textContent = '✦ Create & Open Event';
+  }
+}
+
+async function loadAdminStats() {
+  const year = document.getElementById('adminFilterYear').value;
+  try {
+    const res = await api('getStats', { year });
+    animateNum(document.getElementById('adminTotal'),   res.total);
+    animateNum(document.getElementById('adminPresent'), res.present);
+    animateNum(document.getElementById('adminAbsent'),  res.absent);
+  } catch(e) {}
+}
+
+async function finishAttendance() {
+  if (!confirm('Finish attendance? This will lock entries and generate the absent report.')) return;
+  const btn = document.getElementById('finishBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Finishing…';
+  clearAlert('finishAlert');
+  try {
+    const year = document.getElementById('adminFilterYear').value;
+    const res = await apiPost('finishAttendance', { year });
+    if (!res.ok) throw new Error(res.msg);
+    state.eventLocked = true;
+    btn.textContent = '🔒 Attendance Locked';
+    showAlert('finishAlert', 'Attendance locked! Report saved to Google Sheets.', 'ok');
+    loadAbsentReport();
+  } catch(err) {
+    showAlert('finishAlert', err.message);
+    btn.disabled = false;
+    btn.textContent = '🔒 Finish Attendance & Generate Report';
+  }
+}
+
+async function loadAbsentReport() {
+  const year = document.getElementById('adminFilterYear').value;
+  const res = await api('getAbsentReport', { year });
+  document.getElementById('adminReportSection').style.display = '';
+  const container = document.getElementById('adminReportContainer');
+  container.innerHTML = '';
+  if (!res.sections || !res.sections.length) {
+    container.innerHTML = '<div class="alert alert-ok show">🎉 All students are present!</div>';
+    return;
+  }
+  res.sections.forEach((sec, i) => {
+    const block = buildSectionBlock(sec, i);
+    container.appendChild(block);
+  });
+}
+
+function buildSectionBlock(sec, idx) {
+  const div = document.createElement('div');
+  div.className = 'section-block';
+  div.style.animationDelay = (idx * 0.07) + 's';
+  const hasAbsent = sec.absentees && sec.absentees.length > 0;
+  div.innerHTML = `
+    <div class="section-header" onclick="toggleSection(this)">
+      <span class="section-label">${sec.section} Section · Present: ${sec.presentCount}</span>
+      <span>
+        <span class="section-count ${hasAbsent ? 'has-absent' : 'all-present'}">
+          ${hasAbsent ? sec.absentees.length + ' absent' : '✓ All Present'}
+        </span>
+        <span class="chevron" style="margin-left:8px; color:var(--muted)">▾</span>
+      </span>
+    </div>
+    <div class="section-body ${hasAbsent ? 'open' : ''}">
+      ${hasAbsent
+        ? `<span class="absentees-label">ABSENTEES</span>
+           ${sec.absentees.map(a => `
+             <div class="absentee-item">
+               <div class="absentee-dot"></div>
+               <span>${a.name}</span>
+               <span class="absentee-roll">${a.roll}</span>
+             </div>`).join('')}`
+        : `<div style="font-size:13px; color:var(--green); padding:6px 0">✓ All students present</div>`
+      }
+    </div>
+  `;
+  return div;
+}
+
+function toggleSection(header) {
+  const body    = header.nextElementSibling;
+  const chevron = header.querySelector('.chevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MEMBER DASHBOARD
+═══════════════════════════════════════════════════════════════ */
+function loadMemberDashboard() {
+  // event banner
+  const banner = document.getElementById('memberEventBanner');
+  banner.style.display = '';
+  document.getElementById('memberEventName').textContent = state.eventName;
+  document.getElementById('memberEventMeta').textContent = `${state.eventDate} · ${state.eventVenue}`;
+
+  // locked
+  document.getElementById('memberLockedBanner').style.display = state.eventLocked ? '' : 'none';
+  document.getElementById('memberInputCard').style.opacity = state.eventLocked ? '0.4' : '1';
+  document.getElementById('fetchBtn').disabled = state.eventLocked;
+
+  loadMemberStats();
+}
+
+async function loadMemberStats() {
+  const year = document.getElementById('memberYear').value;
+  try {
+    const res = await api('getStats', { year });
+    animateNum(document.getElementById('mTotal'),   res.total);
+    animateNum(document.getElementById('mPresent'), res.present);
+    animateNum(document.getElementById('mAbsent'),  res.absent);
+  } catch(e) {}
+}
+
+function onYearChange() {
+  const y = document.getElementById('memberYear').value;
+  document.getElementById('rollPrefix').textContent = y ? YEAR_PREFIX[y] : '—';
+  document.getElementById('rollSuffix').value = '';
+  document.getElementById('fetchBtn').disabled = true;
+  clearStudentDetails();
+  clearAlert('fetchAlert');
+  clearAlert('fetchInfo');
+  loadMemberStats();
+}
+
+function onRollInput() {
+  const suffix = document.getElementById('rollSuffix').value.replace(/\D/g,'');
+  document.getElementById('rollSuffix').value = suffix;
+  const year = document.getElementById('memberYear').value;
+  document.getElementById('fetchBtn').disabled = !(year && suffix.length === 4);
+  clearStudentDetails();
+  clearAlert('fetchAlert');
+  clearAlert('fetchInfo');
+}
+
+function onRollEnter(e) { if (e.key === 'Enter') fetchStudent(); }
+
+async function fetchStudent() {
+  if (state.eventLocked) return;
+  const year   = document.getElementById('memberYear').value;
+  const suffix = document.getElementById('rollSuffix').value.trim();
+  if (!year || suffix.length !== 4) return;
+  const roll = YEAR_PREFIX[year] + suffix;
+
+  clearAlert('fetchAlert');
+  clearAlert('fetchInfo');
+  clearStudentDetails();
+
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const res = await api('fetchStudent', { roll });
+    if (!res.ok) throw new Error(res.msg || 'Student not found');
+    state.currentStudent = res.student;
+
+    document.getElementById('studentName').textContent = res.student.name;
+    document.getElementById('studentRoll').textContent = res.student.roll;
+    document.getElementById('studentYear').textContent = YEAR_LABEL[year] || res.student.year;
+    document.getElementById('studentSec').textContent  = 'Section ' + res.student.section;
+    document.getElementById('studentDetails').style.display = '';
+
+    if (res.alreadyPresent) {
+      document.getElementById('dupAlert').style.display = '';
+      document.getElementById('dupAlert').className = 'alert alert-warn show';
+      document.getElementById('markBtn').disabled = true;
+      document.getElementById('markBtn').textContent = '✓ Already Present';
+    } else {
+      document.getElementById('dupAlert').style.display = 'none';
+      document.getElementById('markBtn').disabled = false;
+      document.getElementById('markBtn').textContent = '✔ Mark Present';
+    }
+  } catch(err) {
+    showAlert('fetchAlert', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Search Student';
+  }
+}
+
+function clearStudentDetails() {
+  document.getElementById('studentDetails').style.display = 'none';
+  document.getElementById('dupAlert').style.display = 'none';
+  state.currentStudent = null;
+}
+
+async function markPresent() {
+  if (state.markingInProgress || !state.currentStudent || state.eventLocked) return;
+  state.markingInProgress = true;
+
+  const btn = document.getElementById('markBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Marking…';
+
+  try {
+    const res = await apiPost('markPresent', {
+      roll: state.currentStudent.roll
+    });
+    if (!res.ok) throw new Error(res.msg || 'Failed to mark present');
+
+    // success UI
+    btn.textContent = '✓ Marked Present!';
+    btn.style.background = 'var(--green)';
+    showAlert('fetchInfo', `✓ ${state.currentStudent.name} marked present successfully.`, 'ok');
+    document.getElementById('dupAlert').style.display = 'none';
+
+    // clear & reload stats
+    setTimeout(() => {
+      clearStudentDetails();
+      document.getElementById('rollSuffix').value = '';
+      document.getElementById('fetchBtn').disabled = true;
+      clearAlert('fetchInfo');
+      btn.style.background = '';
+    }, 1800);
+
+    loadMemberStats();
+  } catch(err) {
+    showAlert('fetchAlert', err.message);
+    btn.disabled = false;
+    btn.textContent = '✔ Mark Present';
+  } finally {
+    state.markingInProgress = false;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════════ */
+(function init() {
+  if (SCRIPT_URL) {
+    document.getElementById('scriptUrlInput').value = SCRIPT_URL;
+    showScreen('screenLogin');
+    setHeaderBadge('READY');
+  } else {
+    showScreen('screenSetup');
+  }
+
+  // add ripple to all buttons dynamically added later too
+  document.addEventListener('click', e => {
+    if (e.target.classList.contains('btn')) ripple(e.target, e);
+  });
+})();
+</script>
+</body>
+</html>
