@@ -856,20 +856,44 @@ function ripple(btn, e) {
 }
 document.querySelectorAll('.btn').forEach(b => b.addEventListener('click', e => ripple(b, e)));
 
-async function api(action, params={}) {
-  const url = new URL(SCRIPT_URL);
-  url.searchParams.set('action', action);
-  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
-  const res = await fetch(url.toString(), { redirect: 'follow' });
-  const text = await res.text();
-  try { return JSON.parse(text); }
-  catch(e) { throw new Error('Server error: ' + text.slice(0, 120)); }
+/* ── JSONP — bypasses CORS/redirect issues with Google Apps Script ── */
+function api(action, params={}) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random()*9999);
+    const timer = setTimeout(() => {
+      delete window[cbName];
+      const s = document.getElementById(cbName);
+      if (s) s.remove();
+      reject(new Error('Timed out. Check Script URL and deployment.'));
+    }, 15000);
+
+    window[cbName] = function(data) {
+      clearTimeout(timer);
+      delete window[cbName];
+      const s = document.getElementById(cbName);
+      if (s) s.remove();
+      resolve(data);
+    };
+
+    const url = new URL(SCRIPT_URL);
+    url.searchParams.set('action', action);
+    url.searchParams.set('callback', cbName);
+    Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, String(v)));
+
+    const script = document.createElement('script');
+    script.id  = cbName;
+    script.src = url.toString();
+    script.onerror = () => {
+      clearTimeout(timer);
+      delete window[cbName];
+      script.remove();
+      reject(new Error('Script load error. Check Script URL.'));
+    };
+    document.head.appendChild(script);
+  });
 }
 
-// All mutations also go through GET (Apps Script GET works fine from browsers)
-async function apiPost(action, body={}) {
-  return api(action, body);
-}
+function apiPost(action, body={}) { return api(action, body); }
 
 /* ═══════════════════════════════════════════════════════════════
    SETUP SCREEN
