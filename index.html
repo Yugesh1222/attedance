@@ -2,346 +2,372 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EduTrack — Attendance System</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<title>Lucafama — Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-/* ============================================================
-   TOKENS & RESET
-   ============================================================ */
-:root {
-  --bg:        #0d1117;
-  --surface:   #161b22;
-  --card:      #1c2330;
-  --border:    #30363d;
-  --accent:    #00c896;
-  --accent2:   #0ea5e9;
-  --danger:    #ef4444;
-  --warn:      #f59e0b;
-  --text:      #e6edf3;
-  --muted:     #8b949e;
-  --present:   #00c896;
-  --absent:    #ef4444;
-  --radius:    14px;
-  --radius-lg: 22px;
-  --shadow:    0 8px 32px rgba(0,0,0,.45);
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS — Lucafama warm cream + gold
+═══════════════════════════════════════════════ */
+:root{
+  --bg:       #faf7f2;
+  --bg2:      #f2ede4;
+  --card:     #ffffff;
+  --border:   #e8e0d0;
+  --accent:   #c8952a;
+  --accent2:  #2a6fc8;
+  --gold:     #d4a030;
+  --present:  #1e8c5a;
+  --late:     #d97706;
+  --absent:   #dc2626;
+  --text:     #1a1208;
+  --muted:    #8a7a60;
+  --radius:   12px;
+  --radius-lg:20px;
+  --shadow:   0 4px 24px rgba(100,70,20,.10);
+  --shadow-lg:0 12px 48px rgba(100,70,20,.16);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  font-family:'DM Sans',sans-serif;
+  font-family:'Outfit',sans-serif;
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
 }
 
-/* ============================================================
-   BACKGROUNDS & NOISE
-   ============================================================ */
-.bg-mesh{
-  position:fixed;inset:0;z-index:0;
+/* ── TEXTURE ── */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(0,200,150,.07) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(14,165,233,.06) 0%, transparent 55%),
-    var(--bg);
-  pointer-events:none;
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8952a' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* ============================================================
-   LAYOUT
-   ============================================================ */
-.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 48px;}
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 60px;}
 
-.logo{
-  display:flex;align-items:center;gap:10px;
-  margin-bottom:32px;margin-top:8px;
+/* ── LOGO ── */
+.logo-wrap{margin:12px 0 28px;text-align:center;}
+.logo-emblem{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:52px;height:52px;border-radius:14px;
+  background:linear-gradient(135deg,#c8952a,#8b5e10);
+  box-shadow:0 6px 20px rgba(200,149,42,.35);
+  margin-bottom:8px;
 }
-.logo-mark{
-  width:38px;height:38px;border-radius:10px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-family:'Syne',sans-serif;font-weight:800;color:#0d1117;
+.logo-emblem svg{width:28px;height:28px;fill:#fff;}
+.logo-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.7rem;font-weight:900;
+  letter-spacing:-.5px;
+  background:linear-gradient(135deg,#8b5e10,#c8952a,#8b5e10);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:block;
 }
-.logo-text{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-.5px;color:var(--text);}
-.logo-text span{color:var(--accent);}
+.logo-tagline{font-size:.72rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
 
-/* ============================================================
-   SCREEN SYSTEM
-   ============================================================ */
-.screen{display:none;width:100%;max-width:440px;animation:fadeUp .4s ease both;}
+/* ── SCREENS ── */
+.screen{display:none;width:100%;max-width:450px;animation:fadeUp .35s ease both;}
 .screen.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.screen.wide{max-width:640px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-/* ============================================================
-   CARD
-   ============================================================ */
+/* ── CARD ── */
 .card{
   background:var(--card);
   border:1px solid var(--border);
   border-radius:var(--radius-lg);
-  padding:28px 24px;
+  padding:26px 22px;
   box-shadow:var(--shadow);
 }
-.card-title{
-  font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:700;
-  margin-bottom:6px;letter-spacing:-.3px;
-}
-.card-sub{font-size:.85rem;color:var(--muted);margin-bottom:22px;line-height:1.5;}
+.card+.card{margin-top:14px;}
+.card-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;margin-bottom:4px;}
+.card-sub{font-size:.82rem;color:var(--muted);margin-bottom:20px;line-height:1.5;}
 
-/* ============================================================
-   FORM ELEMENTS
-   ============================================================ */
-.field{margin-bottom:16px;}
-.field label{display:block;font-size:.78rem;font-weight:500;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
-.field input,.field select{
-  width:100%;background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius);padding:12px 14px;
-  color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;
+/* ── TABS ── */
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:20px;}
+.tab{
+  padding:10px 8px;border-radius:var(--radius);
+  background:var(--bg2);border:1.5px solid var(--border);
+  color:var(--muted);font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:500;
+  cursor:pointer;transition:all .2s;text-align:center;
+}
+.tab.active{border-color:var(--accent);color:var(--accent);background:rgba(200,149,42,.07);}
+
+/* ── FIELDS ── */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:.72rem;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.7px;}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--bg);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:11px 14px;
+  color:var(--text);font-family:'Outfit',sans-serif;font-size:.93rem;
   outline:none;transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
 }
 .field input:focus,.field select:focus{
   border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(0,200,150,.12);
+  box-shadow:0 0 0 3px rgba(200,149,42,.12);
 }
-.field select option{background:var(--surface);}
+.field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%238a7a60'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
 
 /* roll row */
-.roll-row{display:flex;gap:8px;align-items:stretch;}
+.roll-row{display:flex;gap:8px;}
 .roll-prefix{
-  background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius);padding:12px 14px;
-  color:var(--accent);font-weight:700;font-size:.95rem;
-  white-space:nowrap;display:flex;align-items:center;
+  background:linear-gradient(135deg,rgba(200,149,42,.12),rgba(200,149,42,.06));
+  border:1.5px solid rgba(200,149,42,.3);
+  border-radius:var(--radius);padding:11px 14px;
+  color:var(--accent);font-weight:700;font-size:.93rem;
+  white-space:nowrap;display:flex;align-items:center;letter-spacing:.5px;
 }
 .roll-row input{flex:1;}
 
-/* ============================================================
-   BUTTONS
-   ============================================================ */
+/* ── BUTTONS ── */
 .btn{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:13px 18px;
+  width:100%;padding:12px 18px;
   border:none;border-radius:var(--radius);
-  font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:500;
-  cursor:pointer;transition:transform .15s,opacity .15s,box-shadow .15s;
+  font-family:'Outfit',sans-serif;font-size:.93rem;font-weight:600;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;
   position:relative;overflow:hidden;
 }
 .btn:active{transform:scale(.97);}
 .btn-primary{
-  background:linear-gradient(135deg,var(--accent),#00a87a);
-  color:#0d1117;font-weight:700;
-  box-shadow:0 4px 20px rgba(0,200,150,.25);
+  background:linear-gradient(135deg,#c8952a,#a67520);
+  color:#fff;box-shadow:0 4px 18px rgba(200,149,42,.35);
 }
-.btn-primary:hover{box-shadow:0 6px 24px rgba(0,200,150,.35);}
-.btn-secondary{background:var(--surface);border:1.5px solid var(--border);color:var(--text);}
+.btn-primary:hover{box-shadow:0 6px 24px rgba(200,149,42,.45);}
+.btn-secondary{background:var(--bg2);border:1.5px solid var(--border);color:var(--text);}
 .btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
-.btn-danger{background:linear-gradient(135deg,#ef4444,#c0392b);color:#fff;box-shadow:0 4px 16px rgba(239,68,68,.25);}
-.btn-danger:hover{box-shadow:0 6px 24px rgba(239,68,68,.35);}
-.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;}
-
+.btn-danger{background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;box-shadow:0 4px 16px rgba(220,38,38,.25);}
+.btn-danger:hover{box-shadow:0 6px 22px rgba(220,38,38,.35);}
+.btn-success{background:linear-gradient(135deg,#1e8c5a,#166042);color:#fff;box-shadow:0 4px 16px rgba(30,140,90,.25);}
+.btn-late{background:linear-gradient(135deg,#d97706,#b45309);color:#fff;box-shadow:0 4px 16px rgba(217,119,6,.25);}
+.btn-sm{padding:8px 14px;font-size:.82rem;width:auto;}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none !important;}
 /* ripple */
-.btn::after{
-  content:'';position:absolute;inset:0;
-  background:rgba(255,255,255,.15);
-  border-radius:inherit;opacity:0;
-  transform:scale(0);transition:transform .4s,opacity .4s;
-}
+.btn::after{content:'';position:absolute;inset:0;background:rgba(255,255,255,.18);border-radius:inherit;opacity:0;transform:scale(0);transition:transform .4s,opacity .4s;}
 .btn:active::after{transform:scale(2.5);opacity:0;transition:0s;}
 
-/* ============================================================
-   TOAST / STATUS
-   ============================================================ */
-.toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
-  background:var(--card);border:1px solid var(--border);
-  padding:12px 22px;border-radius:40px;
-  font-size:.88rem;font-weight:500;
-  box-shadow:var(--shadow);z-index:999;
-  transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;
-  opacity:0;white-space:nowrap;
-}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-.toast.success{border-color:var(--accent);color:var(--accent);}
-.toast.error{border-color:var(--danger);color:var(--danger);}
-.toast.info{border-color:var(--accent2);color:var(--accent2);}
+/* ── MARK BUTTONS ROW ── */
+.mark-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
 
-/* ============================================================
-   EVENT BADGE
-   ============================================================ */
+/* ── EVENT BADGE ── */
 .event-badge{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:12px 16px;
-  margin-bottom:20px;display:flex;align-items:center;gap:10px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 14px;
+  margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  box-shadow:var(--shadow);
 }
-.event-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;
-  box-shadow:0 0 0 3px rgba(0,200,150,.2);animation:pulse 1.8s infinite;}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(0,200,150,.2)}50%{box-shadow:0 0 0 6px rgba(0,200,150,.05)}}
-.event-info{flex:1;min-width:0;}
-.event-name{font-weight:600;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.event-meta{font-size:.75rem;color:var(--muted);}
+.ev-dot{width:8px;height:8px;border-radius:50%;background:var(--present);flex-shrink:0;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px rgba(30,140,90,.2)}50%{box-shadow:0 0 0 7px rgba(30,140,90,.04)}}
+.ev-name{font-weight:700;font-size:.9rem;}
+.ev-meta{font-size:.73rem;color:var(--muted);}
 
-/* ============================================================
-   STUDENT DETAIL CARD
-   ============================================================ */
+/* ── STUDENT CARD ── */
 .student-card{
-  background:var(--surface);border:1.5px solid var(--border);
-  border-radius:var(--radius);padding:16px;
-  margin-bottom:16px;
+  background:linear-gradient(135deg,rgba(200,149,42,.05),rgba(200,149,42,.02));
+  border:1.5px solid rgba(200,149,42,.2);
+  border-radius:var(--radius);padding:14px 16px;
+  margin-bottom:4px;
+  animation:fadeUp .25s ease both;
+}
+.s-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:800;margin-bottom:5px;}
+.s-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.tag-year{background:rgba(42,111,200,.1);color:var(--accent2);}
+.tag-sec{background:rgba(200,149,42,.12);color:var(--accent);}
+.tag-present{background:rgba(30,140,90,.12);color:var(--present);}
+.tag-late{background:rgba(217,119,6,.12);color:var(--late);}
+
+/* ── LIVE COUNT ── */
+.count-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;}
+.count-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 6px;
+  text-align:center;box-shadow:var(--shadow);
+}
+.cnt-num{
+  font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;
+  transition:all .4s cubic-bezier(.34,1.56,.64,1);
+  line-height:1;
+}
+.cnt-lbl{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;}
+.count-total   .cnt-num{color:var(--text);}
+.count-present .cnt-num{color:var(--present);}
+.count-late    .cnt-num{color:var(--late);}
+.count-absent  .cnt-num{color:var(--absent);}
+
+/* ── PROGRESS BAR ── */
+.prog-bar{height:6px;background:var(--bg2);border-radius:4px;overflow:hidden;margin:10px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:4px;transition:width .6s ease;}
+
+/* ── ADMIN PROGRESS GRID ── */
+.audi-grid{display:grid;gap:10px;margin-top:12px;}
+.audi-card{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;
+}
+.audi-name{font-weight:700;font-size:.9rem;margin-bottom:4px;}
+.audi-stats{display:flex;gap:10px;font-size:.8rem;color:var(--muted);}
+.audi-stats span b{color:var(--text);}
+
+/* ── AUDITORIUM SELECTOR ── */
+.audi-list{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+.audi-option{
+  padding:10px 14px;border-radius:var(--radius);
+  background:var(--bg);border:1.5px solid var(--border);
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:.9rem;font-weight:500;
+}
+.audi-option:hover,.audi-option.selected{border-color:var(--accent);background:rgba(200,149,42,.06);color:var(--accent);}
+.audi-option .check{opacity:0;color:var(--accent);font-size:1rem;}
+.audi-option.selected .check{opacity:1;}
+
+/* ── QR SCANNER ── */
+.qr-wrap{
+  background:var(--bg2);border:2px dashed var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:12px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  min-height:220px;position:relative;overflow:hidden;
+}
+#qrVideo{width:100%;border-radius:8px;max-height:180px;object-fit:cover;}
+.qr-corner{position:absolute;width:22px;height:22px;border-color:var(--accent);border-style:solid;}
+.qr-corner.tl{top:8px;left:8px;border-width:3px 0 0 3px;}
+.qr-corner.tr{top:8px;right:8px;border-width:3px 3px 0 0;}
+.qr-corner.bl{bottom:8px;left:8px;border-width:0 0 3px 3px;}
+.qr-corner.br{bottom:8px;right:8px;border-width:0 3px 3px 0;}
+.qr-label{font-size:.8rem;color:var(--muted);}
+
+/* ── REPORT ── */
+.section-block{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:12px;
   animation:fadeUp .3s ease both;
 }
-.student-name{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:4px;}
-.student-meta{font-size:.82rem;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;}
-.student-meta span{display:flex;align-items:center;gap:4px;}
-.tag{
-  display:inline-block;padding:2px 10px;border-radius:20px;
-  font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
-}
-.tag-year{background:rgba(14,165,233,.15);color:var(--accent2);}
-.tag-sec{background:rgba(0,200,150,.12);color:var(--accent);}
-
-/* ============================================================
-   LIVE COUNT
-   ============================================================ */
-.count-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
-.count-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:14px 10px;text-align:center;
-}
-.count-num{
-  font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;
-  transition:all .4s cubic-bezier(.34,1.56,.64,1);
-}
-.count-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
-.count-total .count-num{color:var(--text);}
-.count-present .count-num{color:var(--present);}
-.count-absent .count-num{color:var(--absent);}
-
-/* ============================================================
-   ABSENT REPORT
-   ============================================================ */
-.report-screen{max-width:600px;}
-.section-block{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);overflow:hidden;margin-bottom:12px;
-}
-.section-header{
-  background:linear-gradient(90deg,rgba(0,200,150,.12),transparent);
+.sec-header{
+  background:linear-gradient(90deg,rgba(200,149,42,.1),transparent);
   padding:12px 16px;display:flex;justify-content:space-between;align-items:center;
   border-bottom:1px solid var(--border);
 }
-.section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;}
-.section-count{
-  font-size:.78rem;font-weight:600;
-  background:rgba(0,200,150,.15);color:var(--accent);
+.sec-title{font-family:'Playfair Display',serif;font-weight:800;font-size:.95rem;}
+.sec-pill{
+  font-size:.72rem;font-weight:700;
+  background:rgba(30,140,90,.1);color:var(--present);
   padding:3px 10px;border-radius:20px;
 }
-.absentees-header{
-  padding:8px 16px;
-  font-size:.72rem;font-weight:800;
-  color:var(--danger);text-transform:uppercase;letter-spacing:1px;
-  background:rgba(239,68,68,.06);border-bottom:1px solid rgba(239,68,68,.1);
+.absent-header{
+  padding:7px 16px;font-size:.7rem;font-weight:800;
+  color:var(--absent);text-transform:uppercase;letter-spacing:1px;
+  background:rgba(220,38,38,.05);border-bottom:1px solid rgba(220,38,38,.08);
 }
-.absent-list{padding:8px 0;}
+.late-header{
+  padding:7px 16px;font-size:.7rem;font-weight:800;
+  color:var(--late);text-transform:uppercase;letter-spacing:1px;
+  background:rgba(217,119,6,.05);border-bottom:1px solid rgba(217,119,6,.08);
+}
+.absent-list{padding:6px 0;}
 .absent-item{
-  padding:7px 16px;font-size:.88rem;
-  border-bottom:1px solid rgba(255,255,255,.03);
+  padding:6px 16px;font-size:.87rem;
+  border-bottom:1px solid rgba(0,0,0,.03);
   display:flex;align-items:center;gap:8px;
-  transition:background .15s;
 }
 .absent-item:last-child{border-bottom:none;}
-.absent-item:hover{background:rgba(255,255,255,.03);}
-.absent-item::before{
-  content:'';width:6px;height:6px;border-radius:50%;
-  background:var(--danger);flex-shrink:0;
-}
-.no-absent{
-  padding:12px 16px;font-size:.85rem;color:var(--accent);
-  display:flex;align-items:center;gap:6px;
-}
+.absent-item::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--absent);flex-shrink:0;}
+.late-item::before{background:var(--late) !important;}
+.no-absent{padding:10px 16px;font-size:.84rem;color:var(--present);display:flex;align-items:center;gap:6px;}
 
-/* ============================================================
-   LOGIN SELECTOR
-   ============================================================ */
-.login-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:22px;}
-.login-tab{
-  padding:10px;border-radius:var(--radius);
-  background:var(--surface);border:1.5px solid var(--border);
-  color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;
-  cursor:pointer;transition:all .2s;text-align:center;
+/* ── SHARE ROW ── */
+.share-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(70px);
+  background:var(--text);color:var(--bg);
+  padding:11px 22px;border-radius:40px;
+  font-size:.85rem;font-weight:600;
+  box-shadow:var(--shadow-lg);z-index:9999;
+  transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .3s;
+  opacity:0;white-space:nowrap;max-width:90vw;text-align:center;
 }
-.login-tab.active{border-color:var(--accent);color:var(--accent);background:rgba(0,200,150,.06);}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.success{background:#166042;color:#fff;}
+.toast.error{background:#b91c1c;color:#fff;}
+.toast.info{background:#1e3a6e;color:#fff;}
 
-/* ============================================================
-   SPINNER
-   ============================================================ */
-.spinner{
-  width:18px;height:18px;border:2.5px solid rgba(255,255,255,.2);
-  border-top-color:currentColor;border-radius:50%;
-  animation:spin .7s linear infinite;flex-shrink:0;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ============================================================
-   DIVIDER
-   ============================================================ */
-.divider{height:1px;background:var(--border);margin:20px 0;}
-
-/* ============================================================
-   BACK LINK
-   ============================================================ */
-.back-link{
-  display:flex;align-items:center;gap:6px;
-  font-size:.82rem;color:var(--muted);cursor:pointer;
-  margin-bottom:16px;width:fit-content;
-  transition:color .2s;
-}
-.back-link:hover{color:var(--text);}
-
-/* ============================================================
-   UTIL
-   ============================================================ */
-.text-center{text-align:center;}
-.mt-8{margin-top:8px;}
-.mt-16{margin-top:16px;}
-.hidden{display:none!important;}
-.loading-overlay{
-  position:fixed;inset:0;z-index:100;background:rgba(13,17,23,.8);
+/* ── LOADING ── */
+.overlay{
+  position:fixed;inset:0;z-index:1000;background:rgba(250,247,242,.8);
+  backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;
-  backdrop-filter:blur(4px);
 }
-.loading-overlay.hidden{display:none!important;}
-.loading-box{
+.overlay.hidden{display:none!important;}
+.loader-box{
   background:var(--card);border:1px solid var(--border);
   border-radius:var(--radius-lg);padding:28px 36px;
   display:flex;flex-direction:column;align-items:center;gap:14px;
-  box-shadow:var(--shadow);
+  box-shadow:var(--shadow-lg);
 }
-.loading-text{font-size:.88rem;color:var(--muted);}
-.big-spinner{
-  width:36px;height:36px;border:3px solid rgba(0,200,150,.2);
-  border-top-color:var(--accent);border-radius:50%;
-  animation:spin .7s linear infinite;
+.spinner-gold{
+  width:38px;height:38px;
+  border:3px solid rgba(200,149,42,.2);
+  border-top-color:var(--accent);
+  border-radius:50%;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader-txt{font-size:.85rem;color:var(--muted);}
+.spinner-sm{
+  width:16px;height:16px;
+  border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;
 }
 
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-@media(max-width:400px){
-  .card{padding:22px 16px;}
-  .count-num{font-size:1.5rem;}
-  .app{padding:16px 12px 40px;}
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:18px 0;}
+
+/* ── BACK ── */
+.back{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:.8rem;color:var(--muted);cursor:pointer;margin-bottom:14px;
+  transition:color .2s;
+}
+.back:hover{color:var(--accent);}
+
+/* ── UTIL ── */
+.hidden{display:none!important;}
+.mt8{margin-top:8px;}
+.mt12{margin-top:12px;}
+.mt16{margin-top:16px;}
+.text-center{text-align:center;}
+.text-muted{color:var(--muted);font-size:.82rem;}
+
+/* ── EVENT FORM ROW ── */
+.ev-form-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;}
+.ev-form-row .btn{width:auto;padding:11px 16px;white-space:nowrap;}
+
+/* ── SECTION HDR ── */
+.section-hdg{
+  font-size:.68rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+}
+
+@media(max-width:380px){
+  .count-grid{grid-template-columns:repeat(2,1fr);}
+  .card{padding:20px 14px;}
+  .cnt-num{font-size:1.4rem;}
 }
 </style>
 </head>
 <body>
-<div class="bg-mesh"></div>
 
-<!-- LOADING OVERLAY -->
-<div class="loading-overlay hidden" id="loadingOverlay">
-  <div class="loading-box">
-    <div class="big-spinner"></div>
-    <div class="loading-text" id="loadingText">Please wait…</div>
+<!-- OVERLAY -->
+<div class="overlay hidden" id="overlay">
+  <div class="loader-box">
+    <div class="spinner-gold"></div>
+    <div class="loader-txt" id="loaderTxt">Please wait…</div>
   </div>
 </div>
 
@@ -350,513 +376,787 @@ body{
 
 <div class="app">
 
-  <!-- LOGO -->
-  <div class="logo">
-    <div class="logo-mark">E</div>
-    <div class="logo-text">Edu<span>Track</span></div>
+<!-- ══ LOGO ══ -->
+<div class="logo-wrap">
+  <div class="logo-emblem">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  </div>
+  <span class="logo-name">Lucafama</span>
+  <span class="logo-tagline">Smart Attendance System</span>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 1 — LOGIN
+════════════════════════════════════ -->
+<div class="screen active" id="sLogin">
+  <div class="card">
+    <div class="card-title">Welcome</div>
+    <div class="card-sub">Sign in to continue</div>
+
+    <div class="tabs">
+      <div class="tab active" id="tabAdmin" onclick="switchTab('admin')">🔐 Admin</div>
+      <div class="tab" id="tabMember" onclick="switchTab('member')">👤 Member</div>
+    </div>
+
+    <div id="fAdmin">
+      <div class="field">
+        <label>Admin Password</label>
+        <input type="password" id="adminPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+      </div>
+      <button class="btn btn-primary" onclick="doAdminLogin()">Login as Admin</button>
+    </div>
+
+    <div id="fMember" class="hidden">
+      <div class="field">
+        <label>Member Name / ID</label>
+        <input type="text" id="memberId" placeholder="Your name or ID"/>
+      </div>
+      <div class="field">
+        <label>Member Password</label>
+        <input type="password" id="memberPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doMemberLogin()"/>
+      </div>
+      <button class="btn btn-primary" onclick="doMemberLogin()">Login as Member</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 2 — ADMIN DASHBOARD
+════════════════════════════════════ -->
+<div class="screen" id="sAdmin">
+  <div class="back" onclick="logout()">← Logout</div>
+
+  <!-- Create Event -->
+  <div class="card">
+    <div class="card-title">Create Event</div>
+    <div class="card-sub">Set up one or more auditoriums for this session</div>
+    <div class="field">
+      <label>Event Name</label>
+      <input type="text" id="evName" placeholder="e.g. Annual Day 2026"/>
+    </div>
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="evDate"/>
+    </div>
+    <div class="section-hdg mt8">Auditoriums</div>
+    <div id="audiInputs">
+      <div class="field ev-form-row">
+        <input type="text" placeholder="e.g. Main Auditorium" class="audi-inp"/>
+        <button class="btn btn-secondary btn-sm" onclick="addAudiField()">+ Add</button>
+      </div>
+    </div>
+    <button class="btn btn-primary mt8" onclick="doCreateEvent()">🚀 Create &amp; Open Event</button>
   </div>
 
-  <!-- ======================== SCREEN: LOGIN ======================== -->
-  <div class="screen active" id="screenLogin">
-    <div class="card">
-      <div class="card-title">Welcome Back</div>
-      <div class="card-sub">Sign in to access the attendance system</div>
+  <div class="divider"></div>
 
-      <div class="login-tabs">
-        <div class="login-tab active" id="tabAdmin" onclick="switchTab('admin')">🔐 Admin</div>
-        <div class="login-tab" id="tabMember" onclick="switchTab('member')">👤 Member</div>
+  <!-- Admin Progress -->
+  <div class="card" id="adminProgressCard">
+    <div class="card-title">Live Progress</div>
+    <div class="card-sub" id="progEventMeta">No active event</div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted);margin-bottom:12px;">
+      <span id="progMarked">0 marked</span>
+      <span id="progPercent">0%</span>
+    </div>
+    <div class="audi-grid" id="audiProgressGrid"></div>
+    <button class="btn btn-secondary mt12" onclick="loadAdminProgress()" style="font-size:.82rem;">↻ Refresh</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Finish -->
+  <div class="card">
+    <div class="card-title">Finish Attendance</div>
+    <div class="card-sub">Lock attendance and generate section-wise absent report</div>
+    <div class="field">
+      <label>Confirm Admin Password</label>
+      <input type="password" id="finishPass" placeholder="Re-enter admin password"/>
+    </div>
+    <button class="btn btn-danger" onclick="doFinishAttendance()">🔒 Finish &amp; Generate Report</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 3 — AUDITORIUM SELECT (Member)
+════════════════════════════════════ -->
+<div class="screen" id="sAudiSelect">
+  <div class="back" onclick="logout()">← Logout</div>
+  <div class="card">
+    <div class="card-title">Select Auditorium</div>
+    <div class="card-sub">Choose the hall you are assigned to mark attendance</div>
+    <div class="audi-list" id="audiSelectList"></div>
+    <button class="btn btn-primary" onclick="doSelectAudi()">Continue →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 4 — MEMBER MARK ATTENDANCE
+════════════════════════════════════ -->
+<div class="screen" id="sMember">
+  <div class="back" onclick="showScreen('sAudiSelect')">← Change Auditorium</div>
+
+  <div class="event-badge">
+    <div class="ev-dot"></div>
+    <div>
+      <div class="ev-name" id="badgeName">—</div>
+      <div class="ev-meta" id="badgeMeta">—</div>
+    </div>
+  </div>
+
+  <!-- Input Mode Toggle -->
+  <div class="tabs" style="margin-bottom:14px;">
+    <div class="tab active" id="tabManual" onclick="switchInputMode('manual')">⌨️ Manual</div>
+    <div class="tab" id="tabQR" onclick="switchInputMode('qr')">📷 QR Scan</div>
+  </div>
+
+  <!-- MANUAL -->
+  <div class="card" id="panelManual">
+    <div class="card-title">Mark Attendance</div>
+    <div class="card-sub">Select year, enter last 4 digits</div>
+
+    <div class="field">
+      <label>Year</label>
+      <select id="yearSel" onchange="onYearChange()">
+        <option value="">— Select Year —</option>
+        <option value="1st Year">1st Year</option>
+        <option value="2nd Year">2nd Year</option>
+        <option value="3rd Year">3rd Year</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Roll Number</label>
+      <div class="roll-row">
+        <div class="roll-prefix" id="rollPfx">—</div>
+        <input type="text" id="rollSfx" placeholder="e.g. 1901" maxlength="4" inputmode="numeric"
+          oninput="this.value=this.value.replace(/\D/g,'')"
+          onkeydown="if(event.key==='Enter')doFetch()"/>
       </div>
+    </div>
 
-      <!-- Admin -->
-      <div id="formAdmin">
-        <div class="field">
-          <label>Admin Password</label>
-          <input type="password" id="adminPass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doAdminLogin()"/>
+    <button class="btn btn-secondary" onclick="doFetch()" id="btnFetch">🔍 Fetch Student</button>
+
+    <div id="studentPanel" class="hidden mt12">
+      <div class="student-card">
+        <div class="s-name" id="sName">—</div>
+        <div class="s-meta">
+          <span class="tag tag-year" id="sYear">—</span>
+          <span class="tag tag-sec" id="sSec">—</span>
+          <span style="font-size:.75rem;color:var(--muted);" id="sRoll">—</span>
         </div>
-        <button class="btn btn-primary" onclick="doAdminLogin()">Login as Admin</button>
       </div>
-
-      <!-- Member -->
-      <div id="formMember" class="hidden">
-        <div class="field">
-          <label>Member ID / Name</label>
-          <input type="text" id="memberId" placeholder="Enter your ID"/>
-        </div>
-        <div class="field">
-          <label>Member Password</label>
-          <input type="password" id="memberPass" placeholder="Enter member password" onkeydown="if(event.key==='Enter')doMemberLogin()"/>
-        </div>
-        <button class="btn btn-primary" onclick="doMemberLogin()">Login as Member</button>
+      <div class="mark-row">
+        <button class="btn btn-success" id="btnPresent" onclick="doMark('Present')">✅ Present</button>
+        <button class="btn btn-late"    id="btnLate"    onclick="doMark('Late')">🕐 Late</button>
       </div>
     </div>
   </div>
 
-  <!-- ======================== SCREEN: ADMIN DASHBOARD ======================== -->
-  <div class="screen" id="screenAdmin">
-    <div class="card">
-      <div class="back-link" onclick="logout()">← Logout</div>
-      <div class="card-title">Admin Dashboard</div>
-      <div class="card-sub">Create and manage attendance events</div>
-
-      <div class="field">
-        <label>Event Name</label>
-        <input type="text" id="evName" placeholder="e.g. Annual Day 2026"/>
+  <!-- QR PANEL -->
+  <div class="card hidden" id="panelQR">
+    <div class="card-title">QR Scan</div>
+    <div class="card-sub">Point camera at student QR code (Roll No must be encoded)</div>
+    <div class="qr-wrap">
+      <div class="qr-corner tl"></div><div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div><div class="qr-corner br"></div>
+      <video id="qrVideo" autoplay playsinline muted></video>
+      <div class="qr-label" id="qrStatus">Starting camera…</div>
+    </div>
+    <div id="qrStudentPanel" class="hidden">
+      <div class="student-card">
+        <div class="s-name" id="qrSName">—</div>
+        <div class="s-meta">
+          <span class="tag tag-year" id="qrSYear">—</span>
+          <span class="tag tag-sec" id="qrSSec">—</span>
+        </div>
       </div>
-      <div class="field">
-        <label>Date</label>
-        <input type="date" id="evDate"/>
+      <div class="mark-row">
+        <button class="btn btn-success" id="qrBtnPresent" onclick="doQRMark('Present')">✅ Present</button>
+        <button class="btn btn-late"    id="qrBtnLate"    onclick="doQRMark('Late')">🕐 Late</button>
       </div>
-      <div class="field">
-        <label>Auditorium / Venue</label>
-        <input type="text" id="evAud" placeholder="e.g. Main Auditorium"/>
-      </div>
-      <button class="btn btn-primary" onclick="doCreateEvent()">🚀 Create &amp; Open Event</button>
-
-      <div class="divider"></div>
-      <button class="btn btn-secondary" onclick="doCheckStatus()">📊 Check Event Status</button>
     </div>
   </div>
 
-  <!-- ======================== SCREEN: MEMBER DASHBOARD ======================== -->
-  <div class="screen" id="screenMember">
-    <div class="back-link" onclick="logout()">← Logout</div>
-
-    <!-- Event badge -->
-    <div class="event-badge">
-      <div class="event-dot"></div>
-      <div class="event-info">
-        <div class="event-name" id="activeBadgeName">—</div>
-        <div class="event-meta" id="activeBadgeMeta">—</div>
-      </div>
+  <!-- Live Count -->
+  <div class="mt12">
+    <div class="section-hdg" id="countHdg">Live Count</div>
+    <div class="count-grid">
+      <div class="count-card count-total">  <div class="cnt-num" id="cTotal">—</div>  <div class="cnt-lbl">Total</div></div>
+      <div class="count-card count-present"><div class="cnt-num" id="cPresent">—</div><div class="cnt-lbl">Present</div></div>
+      <div class="count-card count-late">   <div class="cnt-num" id="cLate">—</div>   <div class="cnt-lbl">Late</div></div>
+      <div class="count-card count-absent"> <div class="cnt-num" id="cAbsent">—</div> <div class="cnt-lbl">Absent</div></div>
     </div>
-
-    <div class="card">
-      <div class="card-title">Mark Attendance</div>
-      <div class="card-sub">Select your year and enter your roll number</div>
-
-      <!-- Year -->
-      <div class="field">
-        <label>Select Year</label>
-        <select id="yearSelect" onchange="onYearChange()">
-          <option value="">— Choose Year —</option>
-          <option value="1st Year">1st Year</option>
-          <option value="2nd Year">2nd Year</option>
-          <option value="3rd Year">3rd Year</option>
-        </select>
-      </div>
-
-      <!-- Roll -->
-      <div class="field">
-        <label>Roll Number</label>
-        <div class="roll-row">
-          <div class="roll-prefix" id="rollPrefix">—</div>
-          <input type="text" id="rollSuffix" placeholder="Last 4 digits (e.g. 1901)" maxlength="4" inputmode="numeric"
-            oninput="this.value=this.value.replace(/\D/g,'')"
-            onkeydown="if(event.key==='Enter')doFetchStudent()"/>
-        </div>
-      </div>
-
-      <button class="btn btn-secondary" onclick="doFetchStudent()" id="btnFetch">🔍 Fetch Student</button>
-
-      <!-- Student Detail -->
-      <div id="studentDetail" class="hidden mt-16">
-        <div class="student-card">
-          <div class="student-name" id="studentName">—</div>
-          <div class="student-meta">
-            <span><span class="tag tag-year" id="studentYear">—</span></span>
-            <span>Section: <span class="tag tag-sec" id="studentSection">—</span></span>
-            <span style="color:var(--muted);font-size:.78rem;" id="studentRoll">—</span>
-          </div>
-        </div>
-        <button class="btn btn-primary" id="btnMark" onclick="doMarkPresent()">✅ Mark Present</button>
-      </div>
-    </div>
-
-    <!-- Live Count -->
-    <div style="margin-top:16px;">
-      <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;" id="countYear">Live Count</div>
-      <div class="count-grid">
-        <div class="count-card count-total">
-          <div class="count-num" id="cntTotal">—</div>
-          <div class="count-label">Total</div>
-        </div>
-        <div class="count-card count-present">
-          <div class="count-num" id="cntPresent">—</div>
-          <div class="count-label">Present</div>
-        </div>
-        <div class="count-card count-absent">
-          <div class="count-num" id="cntAbsent">—</div>
-          <div class="count-label">Absent</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Finish -->
-    <button class="btn btn-danger mt-8" onclick="doFinishAttendance()">🔒 Finish Attendance &amp; Generate Report</button>
   </div>
+</div>
 
-  <!-- ======================== SCREEN: ABSENT REPORT ======================== -->
-  <div class="screen report-screen" id="screenReport">
-    <div class="back-link" onclick="showScreen('screenMember')">← Back</div>
-    <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:4px;">Absent Report</div>
-    <div style="font-size:.82rem;color:var(--muted);margin-bottom:20px;" id="reportEventMeta">—</div>
-    <div id="reportContent"></div>
-    <button class="btn btn-secondary mt-16" onclick="logout()">🏠 Done — Go Home</button>
+<!-- ════════════════════════════════════
+     SCREEN 5 — ABSENT REPORT
+════════════════════════════════════ -->
+<div class="screen wide" id="sReport">
+  <div class="back" onclick="showScreen('sAdmin')">← Back to Dashboard</div>
+  <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;margin-bottom:2px;">Absent Report</div>
+  <div class="text-muted" id="repMeta" style="margin-bottom:16px;">—</div>
+  <div class="share-row" style="margin-bottom:16px;">
+    <button class="btn btn-secondary btn-sm" onclick="exportPDF()">📄 Export PDF</button>
+    <button class="btn btn-success btn-sm"   onclick="shareWhatsApp()">💬 WhatsApp Share</button>
   </div>
+  <div id="reportContent"></div>
+  <button class="btn btn-secondary mt12" onclick="logout()">🏠 Done</button>
+</div>
 
 </div><!-- end .app -->
 
 <script>
-// ============================================================
-// CONFIG — ⚠️ REPLACE WITH YOUR APPS SCRIPT URL
-// ============================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw4ZgLUG0sfUEP_uKGgmhHW0chSpJO6E0M92n_BQMMYnz-pun-kUthqO3iN-nEHg4UugA/exec";
+// ════════════════════════════════════════════════
+// CONFIG — Replace with your Apps Script URL
+// ════════════════════════════════════════════════
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzKRLzba88q6JSGIaZhmUfr0d-wT8QIfh72onG1gXnbYYugOl-zMD9KdOZRFV_GFVnQoA/exec";
 
-// ============================================================
+// ════════════════════════════════════════════════
 // STATE
-// ============================================================
-let currentTab = "admin";
-let activeEvent = null;
-let currentStudent = null;
-let selectedYear = "";
-let countRefreshTimer = null;
-let markInProgress = false;
+// ════════════════════════════════════════════════
+let activeEvent     = null;
+let selectedAudi    = null;
+let selectedYear    = "";
+let currentStudent  = null;
+let qrStudent       = null;
+let markBusy        = false;
+let qrStream        = null;
+let qrScanning      = false;
+let qrLastScan      = "";
+let countTimer      = null;
+let progressTimer   = null;
 
-// ============================================================
-// SCREEN MANAGER
-// ============================================================
-function showScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+const PREFIXES = { "1st Year":"26E", "2nd Year":"25E", "3rd Year":"24E" };
+
+// ════════════════════════════════════════════════
+// SCREEN / UI HELPERS
+// ════════════════════════════════════════════════
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function load(msg="Please wait…"){
+  document.getElementById("loaderTxt").textContent=msg;
+  document.getElementById("overlay").classList.remove("hidden");
+}
+function unload(){document.getElementById("overlay").classList.add("hidden");}
+
+let _tt;
+function toast(msg,type="info"){
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.className="toast show "+type;
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove("show"),3400);
 }
 
-// ============================================================
-// LOADING
-// ============================================================
-function showLoading(msg = "Please wait…") {
-  document.getElementById("loadingText").textContent = msg;
-  document.getElementById("loadingOverlay").classList.remove("hidden");
-}
-function hideLoading() {
-  document.getElementById("loadingOverlay").classList.add("hidden");
-}
-
-// ============================================================
-// TOAST
-// ============================================================
-let toastTimer;
-function showToast(msg, type = "info") {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.className = `toast show ${type}`;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 3200);
+// ════════════════════════════════════════════════
+// API
+// ════════════════════════════════════════════════
+async function api(payload){
+  try{
+    const r=await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify(payload)});
+    return await r.json();
+  }catch(e){return {success:false,message:"Network error: "+e.message};}
 }
 
-// ============================================================
-// API CALL
-// ============================================================
-async function api(payload) {
-  try {
-    const res = await fetch(SCRIPT_URL, {
-      method: "POST",
-      body: JSON.stringify(payload)
-    });
-    return await res.json();
-  } catch (e) {
-    return { success: false, message: "Network error: " + e.message };
-  }
+// ════════════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════════════
+function switchTab(t){
+  document.getElementById("tabAdmin").classList.toggle("active",t==="admin");
+  document.getElementById("tabMember").classList.toggle("active",t==="member");
+  document.getElementById("fAdmin").classList.toggle("hidden",t!=="admin");
+  document.getElementById("fMember").classList.toggle("hidden",t!=="member");
 }
 
-// ============================================================
-// TAB SWITCH
-// ============================================================
-function switchTab(tab) {
-  currentTab = tab;
-  document.getElementById("tabAdmin").classList.toggle("active", tab === "admin");
-  document.getElementById("tabMember").classList.toggle("active", tab === "member");
-  document.getElementById("formAdmin").classList.toggle("hidden", tab !== "admin");
-  document.getElementById("formMember").classList.toggle("hidden", tab !== "member");
+function switchInputMode(m){
+  document.getElementById("tabManual").classList.toggle("active",m==="manual");
+  document.getElementById("tabQR").classList.toggle("active",m==="qr");
+  document.getElementById("panelManual").classList.toggle("hidden",m!=="manual");
+  document.getElementById("panelQR").classList.toggle("hidden",m!=="qr");
+  if(m==="qr") startQR(); else stopQR();
 }
 
-// ============================================================
+// ════════════════════════════════════════════════
 // ADMIN LOGIN
-// ============================================================
-async function doAdminLogin() {
-  const pass = document.getElementById("adminPass").value.trim();
-  if (!pass) { showToast("Enter admin password", "error"); return; }
-  showLoading("Authenticating…");
-  const r = await api({ action: "adminLogin", password: pass });
-  hideLoading();
-  if (r.success) {
-    showToast("Welcome, Admin!", "success");
-    showScreen("screenAdmin");
-    // Pre-fill date
-    document.getElementById("evDate").value = new Date().toISOString().slice(0, 10);
-  } else {
-    showToast(r.message, "error");
-  }
+// ════════════════════════════════════════════════
+async function doAdminLogin(){
+  const pw=document.getElementById("adminPass").value.trim();
+  if(!pw){toast("Enter password","error");return;}
+  load("Authenticating…");
+  const r=await api({action:"adminLogin",password:pw});
+  unload();
+  if(r.success){
+    toast("Welcome, Admin!","success");
+    document.getElementById("evDate").value=new Date().toISOString().slice(0,10);
+    showScreen("sAdmin");
+    loadAdminProgress();
+    progressTimer=setInterval(loadAdminProgress,20000);
+  }else toast(r.message,"error");
 }
 
-// ============================================================
+// ════════════════════════════════════════════════
+// AUDITORIUM FIELD BUILDER (Admin)
+// ════════════════════════════════════════════════
+function addAudiField(){
+  const wrap=document.getElementById("audiInputs");
+  const div=document.createElement("div");
+  div.className="field ev-form-row";
+  div.innerHTML=`<input type="text" placeholder="Auditorium name" class="audi-inp"/>
+    <button class="btn btn-danger btn-sm" onclick="this.parentElement.remove()">✕</button>`;
+  wrap.appendChild(div);
+}
+
+// ════════════════════════════════════════════════
 // CREATE EVENT
-// ============================================================
-async function doCreateEvent() {
-  const evName = document.getElementById("evName").value.trim();
-  const evDate = document.getElementById("evDate").value;
-  const evAud  = document.getElementById("evAud").value.trim();
-  if (!evName || !evDate || !evAud) { showToast("Fill all event fields", "error"); return; }
-  showLoading("Creating event…");
-  const r = await api({ action: "createEvent", eventName: evName, date: evDate, auditorium: evAud });
-  hideLoading();
-  if (r.success) {
-    showToast("Event created! Members can now login.", "success");
-  } else {
-    showToast(r.message, "error");
-  }
+// ════════════════════════════════════════════════
+async function doCreateEvent(){
+  const name=document.getElementById("evName").value.trim();
+  const date=document.getElementById("evDate").value;
+  const inps=[...document.querySelectorAll(".audi-inp")];
+  const audis=inps.map(i=>i.value.trim()).filter(Boolean);
+
+  if(!name||!date||!audis.length){toast("Fill event name, date, and at least one auditorium","error");return;}
+
+  const events=audis.map(a=>({eventName:name,date,auditorium:a}));
+  load("Creating event…");
+  const r=await api({action:"createEvent",events});
+  unload();
+  if(r.success){
+    toast(r.message+" Members can now login.","success");
+    loadAdminProgress();
+  }else toast(r.message,"error");
 }
 
-// ============================================================
-// CHECK STATUS (ADMIN)
-// ============================================================
-async function doCheckStatus() {
-  showLoading("Checking…");
-  const r = await api({ action: "getActiveEvent" });
-  hideLoading();
-  if (r.success) {
-    showToast(`Active: ${r.event.eventName} | ${r.event.status}`, "info");
-  } else {
-    showToast("No active event found", "error");
-  }
+// ════════════════════════════════════════════════
+// ADMIN PROGRESS
+// ════════════════════════════════════════════════
+async function loadAdminProgress(){
+  const r=await api({action:"getAdminProgress"});
+  if(!r.success)return;
+  document.getElementById("progEventMeta").textContent=
+    r.event.eventName+" · "+r.event.date;
+  document.getElementById("progFill").style.width=r.percent+"%";
+  document.getElementById("progMarked").textContent=r.totalMarked+" / "+r.totalStudents+" marked";
+  document.getElementById("progPercent").textContent=r.percent+"%";
+
+  const grid=document.getElementById("audiProgressGrid");
+  grid.innerHTML="";
+  Object.entries(r.audiStats).forEach(([audi,s])=>{
+    const d=document.createElement("div");
+    d.className="audi-card";
+    d.innerHTML=`<div class="audi-name">🏛 ${audi}</div>
+      <div class="audi-stats">
+        <span>Present: <b style="color:var(--present)">${s.present}</b></span>
+        <span>Late: <b style="color:var(--late)">${s.late}</b></span>
+        <span>Total: <b>${s.present+s.late}</b></span>
+      </div>`;
+    grid.appendChild(d);
+  });
 }
 
-// ============================================================
+// ════════════════════════════════════════════════
+// FINISH ATTENDANCE (Admin only)
+// ════════════════════════════════════════════════
+async function doFinishAttendance(){
+  const pw=document.getElementById("finishPass").value.trim();
+  if(!pw){toast("Enter admin password to confirm","error");return;}
+  if(!confirm("Finish attendance? No more entries will be allowed."))return;
+  load("Generating report…");
+  const r=await api({action:"finishAttendance",adminPassword:pw});
+  unload();
+  if(r.success){
+    clearInterval(progressTimer);
+    toast("Report generated!","success");
+    buildReport(r.report, r.event||activeEvent);
+    showScreen("sReport");
+  }else toast(r.message,"error");
+}
+
+// ════════════════════════════════════════════════
 // MEMBER LOGIN
-// ============================================================
-async function doMemberLogin() {
-  const id   = document.getElementById("memberId").value.trim();
-  const pass = document.getElementById("memberPass").value.trim();
-  if (!pass) { showToast("Enter member password", "error"); return; }
-  showLoading("Checking event status…");
-  const r = await api({ action: "memberLogin", memberId: id, password: pass });
-  hideLoading();
-  if (r.success) {
-    activeEvent = r.event;
-    document.getElementById("activeBadgeName").textContent = r.event.eventName;
-    document.getElementById("activeBadgeMeta").textContent = `${r.event.date} · ${r.event.auditorium}`;
-    showToast("Logged in!", "success");
-    showScreen("screenMember");
-  } else {
-    showToast(r.message, "error");
+// ════════════════════════════════════════════════
+async function doMemberLogin(){
+  const pw=document.getElementById("memberPass").value.trim();
+  if(!pw){toast("Enter password","error");return;}
+  load("Checking event…");
+  const r=await api({action:"memberLogin",password:pw});
+  unload();
+  if(!r.success){toast(r.message,"error");return;}
+
+  activeEvent=r.event;
+  // Load auditoriums
+  if(r.event.auditoriums.length===1){
+    selectedAudi=r.event.auditoriums[0];
+    enterMemberDashboard();
+  }else{
+    buildAudiSelector(r.event.auditoriums);
+    showScreen("sAudiSelect");
   }
 }
 
-// ============================================================
-// YEAR CHANGE → PREFIX
-// ============================================================
-const PREFIXES = { "1st Year": "26E", "2nd Year": "25E", "3rd Year": "24E" };
-function onYearChange() {
-  selectedYear = document.getElementById("yearSelect").value;
-  const prefix = PREFIXES[selectedYear] || "—";
-  document.getElementById("rollPrefix").textContent = prefix;
-  document.getElementById("studentDetail").classList.add("hidden");
-  document.getElementById("rollSuffix").value = "";
-  currentStudent = null;
-  if (selectedYear) refreshCount();
+function buildAudiSelector(audis){
+  const list=document.getElementById("audiSelectList");
+  list.innerHTML="";
+  audis.forEach(a=>{
+    const d=document.createElement("div");
+    d.className="audi-option";
+    d.dataset.audi=a;
+    d.innerHTML=`<span>🏛 ${a}</span><span class="check">✓</span>`;
+    d.onclick=()=>{
+      document.querySelectorAll(".audi-option").forEach(x=>x.classList.remove("selected"));
+      d.classList.add("selected");
+      selectedAudi=a;
+    };
+    list.appendChild(d);
+  });
 }
 
-// ============================================================
-// FETCH STUDENT
-// ============================================================
-async function doFetchStudent() {
-  const year = document.getElementById("yearSelect").value;
-  if (!year) { showToast("Select year first", "error"); return; }
-  const suffix = document.getElementById("rollSuffix").value.trim();
-  if (suffix.length !== 4) { showToast("Enter exactly 4 digits", "error"); return; }
-  const rollNo = PREFIXES[year] + suffix;
+function doSelectAudi(){
+  if(!selectedAudi){toast("Select an auditorium","error");return;}
+  enterMemberDashboard();
+}
 
-  showLoading("Fetching student…");
-  const r = await api({ action: "getStudent", rollNo });
-  hideLoading();
+function enterMemberDashboard(){
+  document.getElementById("badgeName").textContent=activeEvent.eventName;
+  document.getElementById("badgeMeta").textContent=activeEvent.date+" · "+selectedAudi;
+  showScreen("sMember");
+  countTimer=setInterval(()=>{if(selectedYear)refreshCount();},30000);
+}
 
-  if (r.success) {
-    currentStudent = r.student;
-    document.getElementById("studentName").textContent = r.student.name;
-    document.getElementById("studentYear").textContent = r.student.year;
-    document.getElementById("studentSection").textContent = r.student.section;
-    document.getElementById("studentRoll").textContent = r.student.rollNo;
-    document.getElementById("studentDetail").classList.remove("hidden");
-    document.getElementById("btnMark").disabled = false;
-    document.getElementById("btnMark").textContent = "✅ Mark Present";
-  } else {
-    showToast(r.message || "Student not found", "error");
-    document.getElementById("studentDetail").classList.add("hidden");
-    currentStudent = null;
+// ════════════════════════════════════════════════
+// YEAR → PREFIX
+// ════════════════════════════════════════════════
+function onYearChange(){
+  selectedYear=document.getElementById("yearSel").value;
+  document.getElementById("rollPfx").textContent=PREFIXES[selectedYear]||"—";
+  document.getElementById("studentPanel").classList.add("hidden");
+  document.getElementById("rollSfx").value="";
+  currentStudent=null;
+  if(selectedYear)refreshCount();
+}
+
+// ════════════════════════════════════════════════
+// FETCH STUDENT (Manual)
+// ════════════════════════════════════════════════
+async function doFetch(){
+  const yr=document.getElementById("yearSel").value;
+  if(!yr){toast("Select year first","error");return;}
+  const sfx=document.getElementById("rollSfx").value.trim();
+  if(sfx.length!==4){toast("Enter exactly 4 digits","error");return;}
+  const roll=PREFIXES[yr]+sfx;
+
+  const btn=document.getElementById("btnFetch");
+  btn.disabled=true;
+  btn.innerHTML='<div class="spinner-sm"></div> Fetching…';
+
+  const r=await api({action:"getStudent",rollNo:roll});
+  btn.disabled=false; btn.textContent="🔍 Fetch Student";
+
+  if(r.success){
+    currentStudent=r.student;
+    document.getElementById("sName").textContent=r.student.name;
+    document.getElementById("sYear").textContent=r.student.year;
+    document.getElementById("sSec").textContent="Sec "+r.student.section;
+    document.getElementById("sRoll").textContent=r.student.rollNo;
+    document.getElementById("studentPanel").classList.remove("hidden");
+    document.getElementById("btnPresent").disabled=false;
+    document.getElementById("btnPresent").innerHTML="✅ Present";
+    document.getElementById("btnLate").disabled=false;
+    document.getElementById("btnLate").innerHTML="🕐 Late";
+  }else{
+    toast(r.message||"Student not found","error");
+    document.getElementById("studentPanel").classList.add("hidden");
+    currentStudent=null;
   }
 }
 
-// ============================================================
-// MARK PRESENT
-// ============================================================
-async function doMarkPresent() {
-  if (!currentStudent || markInProgress) return;
-  markInProgress = true;
-  const btn = document.getElementById("btnMark");
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Marking…';
+// ════════════════════════════════════════════════
+// MARK PRESENT / LATE (Manual)
+// ════════════════════════════════════════════════
+async function doMark(status){
+  if(!currentStudent||markBusy)return;
+  markBusy=true;
+  const btn=status==="Present"?document.getElementById("btnPresent"):document.getElementById("btnLate");
+  const other=status==="Present"?document.getElementById("btnLate"):document.getElementById("btnPresent");
+  btn.disabled=true; other.disabled=true;
+  btn.innerHTML='<div class="spinner-sm"></div>';
 
-  const r = await api({
-    action: "markPresent",
-    rollNo:   currentStudent.rollNo,
-    name:     currentStudent.name,
-    year:     currentStudent.year,
-    section:  currentStudent.section
+  const r=await api({
+    action:"markPresent",
+    rollNo:currentStudent.rollNo,name:currentStudent.name,
+    year:currentStudent.year,section:currentStudent.section,
+    status,auditorium:selectedAudi
+  });
+  markBusy=false;
+
+  if(r.success){
+    btn.innerHTML=status==="Present"?"✅ Marked!":"🕐 Marked Late!";
+    toast(currentStudent.name+" marked "+status+"!","success");
+    refreshCount();
+    setTimeout(()=>{
+      document.getElementById("studentPanel").classList.add("hidden");
+      document.getElementById("rollSfx").value="";
+      currentStudent=null;
+      btn.disabled=false; other.disabled=false;
+      btn.innerHTML=status==="Present"?"✅ Present":"🕐 Late";
+    },1400);
+  }else if(r.alreadyMarked){
+    btn.innerHTML="⚠️ Already "+r.existingStatus;
+    toast("Already marked as "+r.existingStatus,"error");
+    btn.disabled=false; other.disabled=false;
+  }else{
+    toast(r.message||"Error","error");
+    btn.disabled=false; other.disabled=false;
+    btn.innerHTML=status==="Present"?"✅ Present":"🕐 Late";
+  }
+}
+
+// ════════════════════════════════════════════════
+// QR SCANNER
+// ════════════════════════════════════════════════
+async function startQR(){
+  if(!navigator.mediaDevices){toast("Camera not supported","error");return;}
+  try{
+    qrStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+    const vid=document.getElementById("qrVideo");
+    vid.srcObject=qrStream;
+    document.getElementById("qrStatus").textContent="Point at QR Code…";
+    qrScanning=true;
+    requestAnimationFrame(scanFrame);
+  }catch(e){
+    document.getElementById("qrStatus").textContent="Camera access denied";
+    toast("Camera permission required for QR scan","error");
+  }
+}
+
+function stopQR(){
+  qrScanning=false;
+  if(qrStream)qrStream.getTracks().forEach(t=>t.stop());
+  qrStream=null;
+}
+
+function scanFrame(){
+  if(!qrScanning)return;
+  const vid=document.getElementById("qrVideo");
+  if(vid.readyState===vid.HAVE_ENOUGH_DATA){
+    const canvas=document.createElement("canvas");
+    canvas.width=vid.videoWidth; canvas.height=vid.videoHeight;
+    const ctx=canvas.getContext("2d");
+    ctx.drawImage(vid,0,0);
+    try{
+      const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+      if(window.jsQR){
+        const code=window.jsQR(img.data,img.width,img.height);
+        if(code&&code.data&&code.data!==qrLastScan){
+          qrLastScan=code.data;
+          processQRCode(code.data.trim().toUpperCase());
+        }
+      }
+    }catch(e){}
+  }
+  requestAnimationFrame(scanFrame);
+}
+
+async function processQRCode(rollNo){
+  document.getElementById("qrStatus").textContent="Found: "+rollNo+" — fetching…";
+  const r=await api({action:"getStudent",rollNo});
+  if(r.success){
+    qrStudent=r.student;
+    document.getElementById("qrSName").textContent=r.student.name;
+    document.getElementById("qrSYear").textContent=r.student.year;
+    document.getElementById("qrSSec").textContent="Sec "+r.student.section;
+    document.getElementById("qrStudentPanel").classList.remove("hidden");
+    document.getElementById("qrBtnPresent").disabled=false;
+    document.getElementById("qrBtnPresent").innerHTML="✅ Present";
+    document.getElementById("qrBtnLate").disabled=false;
+    document.getElementById("qrBtnLate").innerHTML="🕐 Late";
+    document.getElementById("qrStatus").textContent="Student found ✓";
+  }else{
+    document.getElementById("qrStatus").textContent="Not found: "+rollNo;
+    setTimeout(()=>{ qrLastScan=""; document.getElementById("qrStatus").textContent="Scan again…"; },2000);
+  }
+}
+
+async function doQRMark(status){
+  if(!qrStudent)return;
+  const btn=status==="Present"?document.getElementById("qrBtnPresent"):document.getElementById("qrBtnLate");
+  btn.disabled=true; btn.innerHTML='<div class="spinner-sm"></div>';
+
+  const r=await api({
+    action:"markPresent",
+    rollNo:qrStudent.rollNo,name:qrStudent.name,
+    year:qrStudent.year,section:qrStudent.section,
+    status,auditorium:selectedAudi
   });
 
-  markInProgress = false;
-
-  if (r.success) {
-    btn.textContent = "✅ Marked!";
-    showToast(`${currentStudent.name} marked present!`, "success");
+  if(r.success){
+    btn.innerHTML=status==="Present"?"✅ Marked!":"🕐 Marked!";
+    toast(qrStudent.name+" marked "+status,"success");
     refreshCount();
-    // Reset form after 1.5s
-    setTimeout(() => {
-      document.getElementById("studentDetail").classList.add("hidden");
-      document.getElementById("rollSuffix").value = "";
-      currentStudent = null;
-      btn.disabled = false;
-      btn.textContent = "✅ Mark Present";
-    }, 1500);
-  } else if (r.alreadyMarked) {
-    btn.textContent = "⚠️ Already Marked";
-    showToast("Already Marked!", "error");
-    btn.disabled = false;
-  } else {
-    btn.disabled = false;
-    btn.textContent = "✅ Mark Present";
-    showToast(r.message || "Error marking attendance", "error");
+    setTimeout(()=>{
+      document.getElementById("qrStudentPanel").classList.add("hidden");
+      qrStudent=null; qrLastScan="";
+      btn.disabled=false; btn.innerHTML=status==="Present"?"✅ Present":"🕐 Late";
+      document.getElementById("qrStatus").textContent="Scan next student…";
+    },1400);
+  }else if(r.alreadyMarked){
+    btn.innerHTML="⚠️ Already "+r.existingStatus;
+    btn.disabled=false;
+    toast("Already marked","error");
+  }else{
+    btn.disabled=false; btn.innerHTML=status==="Present"?"✅ Present":"🕐 Late";
+    toast(r.message,"error");
   }
 }
 
-// ============================================================
-// LIVE COUNT REFRESH
-// ============================================================
-async function refreshCount() {
-  if (!selectedYear) return;
-  const r = await api({ action: "getLiveCount", year: selectedYear });
-  if (r.success) {
-    animateCount("cntTotal",   r.total);
-    animateCount("cntPresent", r.present);
-    animateCount("cntAbsent",  r.absent);
-    document.getElementById("countYear").textContent = `Live Count — ${selectedYear}`;
+// ════════════════════════════════════════════════
+// LIVE COUNT
+// ════════════════════════════════════════════════
+async function refreshCount(){
+  if(!selectedYear)return;
+  const r=await api({action:"getLiveCount",year:selectedYear,auditorium:selectedAudi});
+  if(r.success){
+    animCount("cTotal",r.total);
+    animCount("cPresent",r.present);
+    animCount("cLate",r.late);
+    animCount("cAbsent",r.absent);
+    document.getElementById("countHdg").textContent="Live Count — "+selectedYear+" · "+selectedAudi;
   }
 }
 
-function animateCount(id, target) {
-  const el = document.getElementById(id);
-  const current = parseInt(el.textContent) || 0;
-  if (current === target) return;
-  const diff = target - current;
-  const steps = Math.min(Math.abs(diff), 20);
-  const step = diff / steps;
-  let val = current;
-  let count = 0;
-  const timer = setInterval(() => {
-    count++;
-    val += step;
-    el.textContent = Math.round(val);
-    if (count >= steps) { el.textContent = target; clearInterval(timer); }
-  }, 30);
+function animCount(id,target){
+  const el=document.getElementById(id);
+  const cur=parseInt(el.textContent)||0;
+  if(cur===target){el.textContent=target;return;}
+  const steps=Math.min(Math.abs(target-cur),18);
+  const step=(target-cur)/steps;
+  let v=cur,c=0;
+  const t=setInterval(()=>{
+    c++; v+=step; el.textContent=Math.round(v);
+    if(c>=steps){el.textContent=target;clearInterval(t);}
+  },28);
 }
 
-// ============================================================
-// FINISH ATTENDANCE
-// ============================================================
-async function doFinishAttendance() {
-  if (!confirm("Are you sure you want to finish attendance? No more entries will be allowed.")) return;
-  showLoading("Generating report…");
-  const r = await api({ action: "finishAttendance" });
-  hideLoading();
-
-  if (r.success) {
-    clearInterval(countRefreshTimer);
-    buildReport(r.report);
-    showToast("Report generated! Check Google Sheets too.", "success");
-    showScreen("screenReport");
-    if (activeEvent) {
-      document.getElementById("reportEventMeta").textContent =
-        `${activeEvent.eventName} · ${activeEvent.date} · ${activeEvent.auditorium}`;
-    }
-  } else {
-    showToast(r.message || "Error generating report", "error");
-  }
-}
-
-// ============================================================
+// ════════════════════════════════════════════════
 // BUILD REPORT UI
-// ============================================================
-function buildReport(report) {
-  const container = document.getElementById("reportContent");
-  container.innerHTML = "";
-  const sections = Object.keys(report).sort();
+// ════════════════════════════════════════════════
+function buildReport(report, ev){
+  const el=document.getElementById("reportContent");
+  el.innerHTML="";
+  if(ev) document.getElementById("repMeta").textContent=
+    (ev.eventName||"")+" · "+(ev.date||"")+" · "+(ev.auditoriums?ev.auditoriums.join(", "):"");
 
-  if (sections.length === 0) {
-    container.innerHTML = `<div style="color:var(--muted);text-align:center;padding:24px;">No data found.</div>`;
-    return;
-  }
+  Object.keys(report).sort().forEach((sec,i)=>{
+    const d=report[sec];
+    const block=document.createElement("div");
+    block.className="section-block";
+    block.style.animationDelay=(i*.07)+"s";
 
-  sections.forEach(sec => {
-    const d = report[sec];
-    const block = document.createElement("div");
-    block.className = "section-block";
-    block.style.animationDelay = `${sections.indexOf(sec) * 0.07}s`;
-    block.style.animation = "fadeUp .4s ease both";
+    const absentHTML=d.absent.length===0
+      ?`<div class="no-absent">✓ Full attendance!</div>`
+      :d.absent.map(n=>`<div class="absent-item">${n}</div>`).join("");
 
-    const absentHTML = d.absent.length === 0
-      ? `<div class="no-absent">✓ Full attendance in this section!</div>`
-      : d.absent.map(name => `<div class="absent-item">${name}</div>`).join("");
+    const lateHTML=d.lateList&&d.lateList.length
+      ?`<div class="late-header">🕐 LATE ARRIVALS (${d.lateList.length})</div>
+        <div class="absent-list">${d.lateList.map(n=>`<div class="absent-item late-item">${n}</div>`).join("")}</div>`:"";
 
-    block.innerHTML = `
-      <div class="section-header">
-        <div class="section-title">${sec} Section</div>
-        <div class="section-count">Present: ${d.present} / ${d.total}</div>
+    block.innerHTML=`
+      <div class="sec-header">
+        <div class="sec-title">${sec} Section</div>
+        <div class="sec-pill">Present: ${d.present} / ${d.total}</div>
       </div>
-      <div class="absentees-header">⚠ ABSENTEES (${d.absent.length})</div>
+      <div class="absent-header">⚠ ABSENTEES (${d.absent.length})</div>
       <div class="absent-list">${absentHTML}</div>
-    `;
-    container.appendChild(block);
+      ${lateHTML}`;
+    el.appendChild(block);
   });
 }
 
-// ============================================================
-// LOGOUT
-// ============================================================
-function logout() {
-  activeEvent = null;
-  currentStudent = null;
-  selectedYear = "";
-  clearInterval(countRefreshTimer);
-  document.getElementById("adminPass").value = "";
-  document.getElementById("memberPass").value = "";
-  document.getElementById("memberId").value = "";
-  document.getElementById("yearSelect").value = "";
-  document.getElementById("rollPrefix").textContent = "—";
-  document.getElementById("rollSuffix").value = "";
-  document.getElementById("studentDetail").classList.add("hidden");
-  document.getElementById("cntTotal").textContent = "—";
-  document.getElementById("cntPresent").textContent = "—";
-  document.getElementById("cntAbsent").textContent = "—";
-  showScreen("screenLogin");
+// ════════════════════════════════════════════════
+// PDF EXPORT
+// ════════════════════════════════════════════════
+function exportPDF(){
+  const el=document.getElementById("reportContent");
+  const meta=document.getElementById("repMeta").textContent;
+  const opt={
+    margin:.5,
+    filename:"Lucafama_AbsentReport.pdf",
+    image:{type:"jpeg",quality:.95},
+    html2canvas:{scale:2},
+    jsPDF:{unit:"in",format:"a4",orientation:"portrait"}
+  };
+  const wrapper=document.createElement("div");
+  wrapper.style.cssText="font-family:Arial,sans-serif;padding:20px;color:#111;";
+  wrapper.innerHTML=`<h2 style="margin-bottom:4px;font-size:18px;">Absent Report</h2>
+    <p style="color:#666;font-size:12px;margin-bottom:16px;">${meta}</p>
+    ${el.innerHTML}`;
+  html2pdf().set(opt).from(wrapper).save();
+  toast("PDF downloaded!","success");
 }
 
-// ============================================================
-// AUTO-REFRESH COUNT every 30s when on member screen
-// ============================================================
-setInterval(() => {
-  if (document.getElementById("screenMember").classList.contains("active") && selectedYear) {
-    refreshCount();
-  }
-}, 30000);
+// ════════════════════════════════════════════════
+// WHATSAPP SHARE
+// ════════════════════════════════════════════════
+function shareWhatsApp(){
+  const meta=document.getElementById("repMeta").textContent;
+  const report=document.getElementById("reportContent");
+  let txt=`*LUCAFAMA — Absent Report*\n${meta}\n\n`;
+
+  document.querySelectorAll(".section-block").forEach(block=>{
+    const title=block.querySelector(".sec-title")?.textContent||"";
+    const pill =block.querySelector(".sec-pill")?.textContent||"";
+    txt+=`*${title}* — ${pill}\n`;
+    txt+="*ABSENTEES:*\n";
+    block.querySelectorAll(".absent-item:not(.late-item)").forEach(i=>{
+      txt+="• "+i.textContent.trim()+"\n";
+    });
+    const lateItems=block.querySelectorAll(".late-item");
+    if(lateItems.length){
+      txt+="*Late:*\n";
+      lateItems.forEach(i=>txt+="⏱ "+i.textContent.trim()+"\n");
+    }
+    txt+="\n";
+  });
+
+  const url="https://wa.me/?text="+encodeURIComponent(txt);
+  window.open(url,"_blank");
+}
+
+// ════════════════════════════════════════════════
+// LOGOUT
+// ════════════════════════════════════════════════
+function logout(){
+  activeEvent=null; selectedAudi=null; selectedYear="";
+  currentStudent=null; qrStudent=null; markBusy=false;
+  clearInterval(countTimer); clearInterval(progressTimer);
+  stopQR();
+  // Reset fields
+  ["adminPass","memberPass","memberId","finishPass"].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.value="";
+  });
+  document.getElementById("yearSel").value="";
+  document.getElementById("rollPfx").textContent="—";
+  document.getElementById("rollSfx").value="";
+  document.getElementById("studentPanel").classList.add("hidden");
+  document.getElementById("cTotal").textContent="—";
+  document.getElementById("cPresent").textContent="—";
+  document.getElementById("cLate").textContent="—";
+  document.getElementById("cAbsent").textContent="—";
+  switchInputMode("manual");
+  showScreen("sLogin");
+}
+
+// ════════════════════════════════════════════════
+// Load jsQR for QR scanning
+// ════════════════════════════════════════════════
+(function(){
+  const s=document.createElement("script");
+  s.src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js";
+  document.head.appendChild(s);
+})();
 </script>
 </body>
 </html>
